@@ -66,11 +66,6 @@ export default {
       rules: {
         username: [
               { required: true, message: "请输入您的用户名", trigger: "blur" },
-              // {
-              //   pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-              //   message: "请输入正确的电话号码",
-              //   trigger: "blur",
-              // },
             ],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }],
       },
@@ -79,38 +74,32 @@ export default {
   },
   methods: {
     confirm() {
-      this.confirm_disabled = true;
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
+      console.log(this.loginForm);
+      // this.confirm_disabled = true;
+      // this.$refs.loginForm.validate((valid) => {
+      //   if (valid) {
           //valid成功为true，失败为false
           //去后台验证用户名密码
-          this.$http
-            .post(`/user/login?username=${this.loginForm.username}&password=${this.loginForm.password}`, 
-              )
-            .then((res) => res.data)
-            .then((res) => {
-              console.log("login")
-              console.log(res);
-              if (res.data != null) {
-                //存储
-                sessionStorage.setItem("CurUser", JSON.stringify(res.data));
-
-                //跳转到主页
-                if (res.data.username == "admin_12345") // 在这做判断，如果是管理员账号，跳转到main路由
-                  this.$router.push("/main")
-                else // 普通用户到petadopt路由
-                  this.$router.push("/index/petadopt");
-              } else {
-                this.confirm_disabled = false;
-                alert("校验失败，无此账号信息，或账号密码错误！");
-                return false;
-              }
-            });
-        } else {
-          this.confirm_disabled = false;
-          console.log("校验失败");
-          return false;
-        }
+      this.$http
+        .post(`/user/login?username=
+              ${this.loginForm.username}&password=${this.loginForm.password}`)
+        .then((res) => res.data)
+        .then((res) => {
+          console.log("login")
+          console.log(res);
+          if (res.code == 200 && res.data != null) {
+            console.log("查找到了登录的账号");
+            //存储
+            // sessionStorage.setItem("CurUser", JSON.stringify(res.data));
+            //跳转到主页
+            // if (res.data.username == "admin_12345") // 在这做判断，如果是管理员账号，跳转到main路由
+              // this.$router.push("/main")
+            // else // 普通用户到petadopt路由
+          } else {
+              this.$message.error(res.message);
+          }
+          
+        
       });
     },
   },
@@ -142,6 +131,8 @@ export default {
 .login-title {
   margin: 20px 0;
   text-align: center;
+  font-size: 20px;
+  font-weight: bolder;
 }
 .login-content {
   width: 400px;
