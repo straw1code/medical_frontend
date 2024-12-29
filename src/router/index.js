@@ -6,6 +6,7 @@ import User from '../views/User.vue'
 import Dashboard from '../views/Dashboard.vue'
 import CompanyManage from '@/views/management/CompanyManage.vue'
 import CityinfoManage from '@/views/management/CityinfoManage.vue'
+import SaleposManage from '@/views/management/SaleposManage.vue'
 
 const routes = [
     { path: "/", redirect: "/login" },
@@ -24,6 +25,11 @@ const routes = [
                 path: "company_manage",
                 component: CompanyManage,
                 meta: { title: "医药公司信息管理"},
+            },
+            {
+                path: "salepos_manage",
+                component: SaleposManage,
+                meta: { title: "销售地点管理"},
             },
             {
                 path: "cityinfo_manage",

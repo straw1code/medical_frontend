@@ -28,7 +28,7 @@
                   >
                   <el-popconfirm
                   title="确认删除?"
-                  @confirm="deleteReco(scope.row.pid)"
+                  @confirm="deleteReco(scope.row.id)"
                   >
                   <template #reference>
                       <el-button type="danger">删除</el-button>
@@ -82,13 +82,13 @@
         >
         <!-- 修改dialog -->
         <el-form ref="form" :model="modifyForm" label-width="120px" :rules="rules">
-            <el-form-item label="公司编号" prop="company_name">
+            <el-form-item label="公司编号" prop="id">
                 <el-input disabled v-model="modifyForm.id"></el-input>
             </el-form-item>
-            <el-form-item label="公司名称" prop="company_name">
+            <el-form-item label="公司名称" prop="name">
                 <el-input v-model="modifyForm.name"></el-input>
             </el-form-item>
-            <el-form-item label="公司电话" prop="company_phone">
+            <el-form-item label="公司电话" prop="phone">
                 <el-input v-model="modifyForm.phone"></el-input>
             </el-form-item>
         </el-form>
@@ -163,27 +163,16 @@ export default {
       });
     },
     doModify() {
-      this.modifyForm.isNeutered == "是" ? this.modifyForm.isNeutered = 1 : this.modifyForm.isNeutered = 0;
-
-      this.modifyForm.isVaccinated == "是" ? this.modifyForm.isVaccinated = 1 : this.modifyForm.isVaccinated = 0;
-
-      if (this.modifyForm.stationId == "春田花花")
-        this.modifyForm.stationId = 1
-      else if (this.modifyForm.stationId == "梦想小屋")
-        this.modifyForm.stationId = 2
-      else 
-        this.modifyForm.stationId = 3
-
-      this.$http.post("/pet/saveOrModify", this.modifyForm).then((res) => {
+      this.$http.post(`/company/${this.modifyForm.id}`, this.modifyForm).then((res) => {
         console.log(res);
-        if (res.status == 200) {
+        if (res.data.code == 200) {
           this.$message({
-            message: "操作成功",
+            message: "修改成功",
             type: "success",
           });
           this.centerDialogVisible1 = false;
-          this.loadPetsInfo();
-        } else this.$message.error("数据提交失败");
+          this.loadInfo();
+        } else this.$message.error(res.data.message);
       });
     },
     logout() {
@@ -202,18 +191,18 @@ export default {
         this.modifyForm = row;
       });
     },
-    deleteReco(pid) {
+    deleteReco(id) {
       console.log("delete");
-      console.log(pid);
-      this.$http.get("/pet/delete?pid=" + pid).then((res) => {
+      console.log(id);
+      this.$http.delete(`/company/${id}`).then((res) => {
         console.log(res);
-        if (res.status == 200) {
+        if (res.data.code == 200) {
           this.$message({
-            message: "操作成功",
+            message: "删除成功",
             type: "success",
           });
-          this.loadPetsInfo();
-        } else this.$message.error("数据提交失败");
+          this.loadInfo();
+        } else this.$message.error(res.data.message);
       });
     },
     

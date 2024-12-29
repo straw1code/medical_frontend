@@ -89,16 +89,14 @@ export default {
           if (res.code == 200 && res.data != null) {
             console.log("查找到了登录的账号");
             //存储
-            // sessionStorage.setItem("CurUser", JSON.stringify(res.data));
+            sessionStorage.setItem("CurUser", JSON.stringify(res.data));
             //跳转到主页
+            this.$router.push("/main")
             // if (res.data.username == "admin_12345") // 在这做判断，如果是管理员账号，跳转到main路由
-              // this.$router.push("/main")
             // else // 普通用户到petadopt路由
           } else {
               this.$message.error(res.message);
           }
-          
-        
       });
     },
   },
