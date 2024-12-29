@@ -81,8 +81,7 @@ export default {
           //valid成功为true，失败为false
           //去后台验证用户名密码
       this.$http
-        .post(`/user/login?username=
-              ${this.loginForm.username}&password=${this.loginForm.password}`)
+        .post(`/user/login?username=${this.loginForm.username}&password=${this.loginForm.password}`)
         .then((res) => res.data)
         .then((res) => {
           console.log("login")
