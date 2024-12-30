@@ -43,11 +43,6 @@
           还没有账号？请
           <router-link to="/register" tag="span">注册</router-link>
         </div>
-        <!-- <div style="float: right; font-size: small">
-          还没有账号？请<span style="color: goldenrod; cursor: pointer"
-            >注册</span
-          >
-        </div> -->
       </div>
     </div>
   </div>
@@ -75,11 +70,6 @@ export default {
   methods: {
     confirm() {
       console.log(this.loginForm);
-      // this.confirm_disabled = true;
-      // this.$refs.loginForm.validate((valid) => {
-      //   if (valid) {
-          //valid成功为true，失败为false
-          //去后台验证用户名密码
       this.$http
         .post(`/user/login?username=${this.loginForm.username}&password=${this.loginForm.password}`)
         .then((res) => res.data)

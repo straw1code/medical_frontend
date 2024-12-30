@@ -3,13 +3,40 @@
     <div class="outbox">
       <!-- 搜索框 -->
         <div style="margin-bottom: 5px; margin-top: 20px; text-align: center;">
+            <span>医保编号</span>
             <el-input
-                v-model="searchEtd"
-                placeholder="请输入要查询的公司名称"
-                style="width: 70%"
-                @keyup.enter.native="search"
+                v-model="searchEtd.id"
+                placeholder="请输入"
+                style="width: 17%"
             >
             </el-input>
+            <span>政策标题</span>
+            <el-input
+                v-model="searchEtd.title"
+                placeholder="请输入"
+                style="width: 17%"
+            >
+            </el-input>
+            <span>发布时间</span>
+            <el-date-picker
+                v-model="searchEtd.time"
+                type="date"
+                placeholder="选择日期">
+            </el-date-picker>
+            <span>城市</span>
+                <el-cascader
+                    placeholder="请选择要查询的城市"
+                    size="large"
+                    :options="pcTextArr"
+                    v-model="searchEtd.city">
+                </el-cascader>
+                <!-- v-model="selectedOptions" -->
+            <!-- <el-input
+                v-model="searchEtd.city"
+                placeholder="请选择要查询的城市"
+                style="width: 17%"
+            >
+            </el-input> -->
             <el-button type="primary" @click="search" style="margin-left: 12px;">查询</el-button>
             <el-button type="success" @click="addBtn">新增</el-button>
         </div>
@@ -104,6 +131,7 @@
 </template>
 <script>
 import Breadcrumb from '@/components/Breadcrumb.vue';
+import { pcTextArr } from 'element-china-area-data'
 
 export default {
   data() {
@@ -112,7 +140,7 @@ export default {
       pageSize: 12,
       currentPage: 1,
       total: 0,
-      searchEtd: "",
+      searchEtd: {},
       centerDialogVisible: false,
       rules: {
         name: [{ required: true,  message: "请输入公司名称", trigger: "blur" }],
@@ -128,6 +156,8 @@ export default {
       },
       modifyForm: {},
       centerDialogVisible1: false, // 修改触发的dialog窗口
+      pcTextArr,
+      selectedOptions: []// 城市二级选择
     };
   },
   created() {

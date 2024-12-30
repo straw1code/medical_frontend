@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import Aside from "../views/Aside.vue";
-import Header from "../views/Header.vue";
+import Aside from "./Aside.vue";
+import Header from "./Header.vue";
 
 export default {
   components: {

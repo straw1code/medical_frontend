@@ -1,12 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-import Main from '../views/Main.vue'
+import Main from '../views/layout/Main.vue'
 import Login from '../views/login/Login.vue'
 import User from '../views/User.vue'
 import Dashboard from '../views/Dashboard.vue'
 import CompanyManage from '@/views/management/CompanyManage.vue'
 import CityinfoManage from '@/views/management/CityinfoManage.vue'
 import SaleposManage from '@/views/management/SaleposManage.vue'
+import MedinfoManage from '@/views/management/MedinfoManage.vue'
+import HcpolicyManage from '@/views/management/HcpolicyManage.vue'
 
 const routes = [
     { path: "/", redirect: "/login" },
@@ -35,6 +37,16 @@ const routes = [
                 path: "cityinfo_manage",
                 component: CityinfoManage,
                 meta: { title: "城市信息管理"},
+            },
+            {
+                path: "medinfo_manage",
+                component: MedinfoManage,
+                meta: { title: "药品信息管理"},
+            },
+            {
+                path: "hcpolicy_manage",
+                component: HcpolicyManage,
+                meta: { title: "医保政策管理"},
             },
             {
                 path: "user",

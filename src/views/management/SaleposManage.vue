@@ -18,9 +18,10 @@
       :header-cell-style="{'text-align':'center'}"
       :cell-style="{'text-align':'center'}"
       >
-          <el-table-column prop="id" label="医药公司编号"/>
-          <el-table-column prop="name" label="公司名称"/>
-          <el-table-column prop="phone" label="公司电话"/>           
+          <el-table-column prop="saleId" label="药店编号"/>
+          <el-table-column prop="saleName" label="药店名称"/>
+          <el-table-column prop="salePhone" label="药店电话"/>           
+          <el-table-column prop="address" label="药店地址"/>           
           <el-table-column prop="operare" label="操作">
             <template v-slot="scope">
                 <el-button type="success" @click="modifyBtn(scope.row)"
@@ -28,7 +29,7 @@
                 >
                 <el-popconfirm
                 title="确认删除?"
-                @confirm="deleteReco(scope.row.id)"
+                @confirm="deleteReco(scope.row)"
                 >
                 <template #reference>
                     <el-button type="danger">删除</el-button>
@@ -59,11 +60,14 @@
       align-center
       >
       <el-form ref="form" :model="cpyForm" label-width="120px" :rules="rules">
-          <el-form-item label="公司名称" prop="name">
-              <el-input v-model="cpyForm.name"></el-input>
+          <el-form-item label="药店名称" prop="saleName">
+              <el-input v-model="cpyForm.saleName"></el-input>
           </el-form-item>
-          <el-form-item label="公司电话" prop="phone">
-              <el-input v-model="cpyForm.phone"></el-input>
+          <el-form-item label="药店电话" prop="salePhone">
+              <el-input v-model="cpyForm.salePhone"></el-input>
+          </el-form-item>
+          <el-form-item label="药店地址" prop="address">
+              <el-input v-model="cpyForm.address"></el-input>
           </el-form-item>
       </el-form>
       <template #footer>
@@ -74,22 +78,22 @@
       </template>
   </el-dialog>
 
+  <!-- 修改dialog -->
   <el-dialog 
       v-model="centerDialogVisible1"
       title="修改"
       width="50%"
       align-center
       >
-      <!-- 修改dialog -->
       <el-form ref="form" :model="modifyForm" label-width="120px" :rules="rules">
-          <el-form-item label="公司编号" prop="id">
-              <el-input disabled v-model="modifyForm.id"></el-input>
+          <el-form-item label="药店编号" prop="saleId">
+              <el-input disabled v-model="modifyForm.saleId"></el-input>
           </el-form-item>
-          <el-form-item label="公司名称" prop="name">
-              <el-input v-model="modifyForm.name"></el-input>
+          <el-form-item label="药店名称" prop="saleName">
+              <el-input v-model="modifyForm.saleName"></el-input>
           </el-form-item>
-          <el-form-item label="公司电话" prop="phone">
-              <el-input v-model="modifyForm.phone"></el-input>
+          <el-form-item label="药店电话" prop="salePhone">
+              <el-input v-model="modifyForm.salePhone"></el-input>
           </el-form-item>
       </el-form>
       <template #footer>
@@ -115,16 +119,17 @@ data() {
     searchEtd: "",
     centerDialogVisible: false,
     rules: {
-      name: [{ required: true,  message: "请输入公司名称", trigger: "blur" }],
-      phone: [{ required: true, 
+      saleName: [{ required: true,  message: "请输入药店名称", trigger: "blur" }],
+      address: [{ required: true,  message: "请输入药店地址", trigger: "blur" }],
+      salePhone: [{ required: true, 
                 pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                message: "请输入有效的公司电话", 
+                message: "请输入有效的药店电话", 
                 trigger: "blur" 
              }],
     },
     cpyForm: {//新增弹出框
-      name: "",
-      phone: "",
+      saleName: "",
+      salePhone: "",
     },
     modifyForm: {},
     centerDialogVisible1: false, // 修改触发的dialog窗口
@@ -139,18 +144,19 @@ methods: {
   },
   loadInfo() {
     this.$http
-      .get(`/sale?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
+      .get(`/sale?pn=${this.currentPage}&size=${this.pageSize}`)
       .then((res) => {
+        console.log("loadSaleInfo");
         console.log(res);
-        if (res.data.code == 200 && res.data.data != null) {
+        if (res.data.code == 200 && res.data.data.list != null) {
           this.tableData = res.data.data.list;
           this.total = res.data.data.total;
         } else alert("获取数据失败");
       });
   },
   doSave() {// 新增公司信息
-    this.$http.post("/company", this.cpyForm).then((res) => {
-      console.log("新增公司信息");
+    this.$http.post("/sale", this.cpyForm).then((res) => {
+      console.log("新增药店信息");
       console.log(res);
       if (res.data.code == 200) {
         this.$message({
@@ -163,8 +169,8 @@ methods: {
     });
   },
   doModify() {
-    this.$http.post(`/company/${this.modifyForm.id}`, this.modifyForm).then((res) => {
-      console.log(res);
+    this.$http.put(`/sale/${this.modifyForm.saleId}`, this.modifyForm).then((res) => {
+      console.log("修改请求返回数据", res);
       if (res.data.code == 200) {
         this.$message({
           message: "修改成功",
@@ -189,12 +195,14 @@ methods: {
     this.centerDialogVisible1 = true;
     this.$nextTick(() => {
       this.modifyForm = row;
+      console.log("modifyForm");
+      console.log(this.modifyForm);
     });
   },
-  deleteReco(id) {
+  deleteReco(row) {
     console.log("delete");
-    console.log(id);
-    this.$http.delete(`/company/${id}`).then((res) => {
+    console.log(row);
+    this.$http.delete(`/sale/${row.saleId}`).then((res) => {
       console.log(res);
       if (res.data.code == 200) {
         this.$message({
@@ -231,7 +239,7 @@ methods: {
     });
   },
   resetInput() {
-    this.searchEtdName = "";
+    this.searchEtd = "";
   },
   handleSizeChange(val) {
     console.log(`每页 ${val} 条`);

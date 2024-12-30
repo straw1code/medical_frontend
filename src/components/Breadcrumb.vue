@@ -4,7 +4,7 @@
         <br>
         <el-breadcrumb  separator="/">
             <el-breadcrumb-item :to="{ path: '/main/dashborad' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item v-for="(v, i) in menuArr" :to="v.path" :key="i">{{ v.name }}</el-breadcrumb-item>">
+            <el-breadcrumb-item v-for="(v, i) in menuArr" :to="v.path" :key="i">{{ v.name }}</el-breadcrumb-item>>
         </el-breadcrumb>
     </div>
 </template>

@@ -4,7 +4,7 @@
         <img :src=img style="height: 100%; width: 100%;margin-left: -0px;">
       </el-carousel-item>
     </el-carousel>
-    <el-card v-for="card in cardinfo" class="box-card" :body-style="{ padding: '0px' }" >
+    <el-card shadow="hover" v-for="card in cardinfo" class="box-card" :body-style="{ padding: '0px' }" >
     <img :src="card.img" class="image">
         <div style="padding: 14px;">
             <div class="bottom clearfix">

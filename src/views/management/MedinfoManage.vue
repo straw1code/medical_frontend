@@ -5,7 +5,7 @@
         <div style="margin-bottom: 5px; margin-top: 20px; text-align: center;">
             <el-input
                 v-model="searchEtd"
-                placeholder="请输入要查询的公司名称"
+                placeholder="请输入要查询的药品名称"
                 style="width: 70%"
                 @keyup.enter.native="search"
             >
@@ -18,9 +18,11 @@
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
         >
-            <el-table-column prop="id" label="医药公司编号"/>
-            <el-table-column prop="name" label="公司名称"/>
-            <el-table-column prop="phone" label="公司电话"/>           
+            <el-table-column prop="id" label="药品编号"/>
+            <el-table-column prop="name" label="药品图片"/>
+            <el-table-column prop="name" label="药品名称"/>
+            <el-table-column prop="phone" label="销售地点"/>           
+            <el-table-column prop="phone" label="发布者"/>           
             <el-table-column prop="operare" label="操作">
               <template v-slot="scope">
                   <el-button type="success" @click="modifyBtn(scope.row)"
