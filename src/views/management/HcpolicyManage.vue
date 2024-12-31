@@ -205,19 +205,11 @@ export default {
   },
   methods: {
     search() {//todo
-      this.$http
-        .get(`/medical_policy/${this.searchEtd}`)
-        .then((res) => {
-          console.log("搜索返回数据" ,res);
-          if (res.data.code == 200 && res.data.data != null) {
-            this.tableData = res.data.data.list;
-            this.total = res.data.data.total;
-          } else alert("获取数据失败");
-        });
+      this.loadInfo()
     },
     loadInfo() {
       this.$http
-        .get(`/medical_policy?pn=${this.currentPage}&size=${this.pageSize}`)
+        .get(`/medical_policy?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
         .then((res) => {
           console.log("加载医保返回数据" ,res);
           if (res.data.code == 200 && res.data.data != null) {
@@ -227,9 +219,10 @@ export default {
         });
     },
     doSave() {// 新增公司信息
-      this.$http.post("/medical_policy", this.cpyForm).then((res) => {
-        console.log("新增公司信息");
-        console.log(res);
+      this.cpyForm.cityName = this.cpyForm.cityName[1];
+      console.log("即将提交的新增表单", this.cpyForm);
+      this.$http.post(`/medical_policy?city=${this.cpyForm.cityName}`, this.cpyForm).then((res) => {
+        console.log("新增医保政策信息", res);
         if (res.data.code == 200) {
           this.$message({
             message: "新增成功",

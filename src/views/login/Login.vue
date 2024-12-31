@@ -74,10 +74,10 @@ export default {
         .post(`/user/login?username=${this.loginForm.username}&password=${this.loginForm.password}`)
         .then((res) => res.data)
         .then((res) => {
-          console.log("login")
+          console.log("login返回的数据")
           console.log(res);
           if (res.code == 200 && res.data != null) {
-            console.log("查找到了登录的账号");
+            
             //存储
             sessionStorage.setItem("CurUser", JSON.stringify(res.data));
             //跳转到主页

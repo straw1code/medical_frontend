@@ -173,30 +173,21 @@ export default {
     };
   },
   created() {
-    // this.loadInfo();
+    this.loadInfo();
   },
   methods: {
     search() {//todo
-        console.log("typeof searchEtd",typeof(this.searchEtd));
-      this.$http
-        .get(`/company_policy/${parseInt(this.searchEtd, 10)}`)
-        .then((res) => {
-          console.log("搜索返回数据" ,res);
-        //   if (res.data.code == 200 && res.data.data != null) {
-        //     this.tableData = res.data.data.list;
-        //     this.total = res.data.data.list;
-        //   } else alert("获取数据失败");
-        });
+        this.loadInfo();
     },
     loadInfo() {
       this.$http
-        .get(`/company_policy?id=${this.searchEtd}`)
+        .get(`/medical_policy?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
         .then((res) => {
-          console.log("初始化loadInfo" ,res);
-          if (res.data.code == 200 && res.data.data != null) {
-            this.tableData = res.data.data.list;
-            this.total = res.data.data.list.length;
-          } else alert("获取数据失败");
+          console.log("初始页面(搜索)，加载医保政策信息", res);
+        //   if (res.data.code == 200 && res.data.data != null) {
+        //     this.tableData = res.data.data.list;
+        //     this.total = res.data.data.list.length;
+        //   } else alert("获取数据失败");
         });
     },
     doSave() {// 新增公司信息
