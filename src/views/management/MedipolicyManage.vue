@@ -3,40 +3,12 @@
     <div class="outbox">
       <!-- 搜索框 -->
         <div style="margin-bottom: 5px; margin-top: 20px; text-align: center;">
-            <!-- <span>医保编号</span> -->
             <el-input
                 v-model="searchEtd"
-                placeholder="请输入医保编号"
+                placeholder="请输入要查询的政策名称"
                 style="width: 70%"
             >
             </el-input>
-            <!-- <span>政策标题</span>
-            <el-input
-                v-model="searchEtd.title"
-                placeholder="请输入"
-                style="width: 17%"
-            >
-            </el-input>
-            <span>发布时间</span>
-            <el-date-picker
-                v-model="searchEtd.time"
-                type="date"
-                placeholder="选择日期">
-            </el-date-picker>
-            <span>城市</span>
-                <el-cascader
-                    placeholder="请选择要查询的城市"
-                    size="large"
-                    :options="pcTextArr"
-                    v-model="searchEtd.city">
-                </el-cascader> -->
-                <!-- v-model="selectedOptions" -->
-            <!-- <el-input
-                v-model="searchEtd.city"
-                placeholder="请选择要查询的城市"
-                style="width: 17%"
-            >
-            </el-input> -->
             <el-button type="primary" @click="search" style="margin-left: 12px;">查询</el-button>
             <el-button type="success" @click="addBtn">新增</el-button>
         </div>
@@ -46,9 +18,9 @@
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
         >
-            <el-table-column prop="id" label="医保编号"/>
-            <el-table-column prop="title" label="政策标题"/>
-            <el-table-column prop="city.cityName" label="城市"> 
+            <el-table-column prop="" label="公司名称"/>
+            <el-table-column prop="title" label="政策编号"/>
+            <el-table-column prop="city.cityName" label="政策名称"> 
                 <template #default="scope">
                     {{ scope.row.city ? scope.row.city.cityName : '暂无数据' }}
                 </template>    
@@ -201,33 +173,34 @@ export default {
     };
   },
   created() {
-    this.loadInfo();
+    // this.loadInfo();
   },
   methods: {
     search() {//todo
+        console.log("typeof searchEtd",typeof(this.searchEtd));
       this.$http
-        .get(`/medical_policy/${this.searchEtd}`)
+        .get(`/company_policy/${parseInt(this.searchEtd, 10)}`)
         .then((res) => {
           console.log("搜索返回数据" ,res);
-          if (res.data.code == 200 && res.data.data != null) {
-            this.tableData = res.data.data.list;
-            this.total = res.data.data.total;
-          } else alert("获取数据失败");
+        //   if (res.data.code == 200 && res.data.data != null) {
+        //     this.tableData = res.data.data.list;
+        //     this.total = res.data.data.list;
+        //   } else alert("获取数据失败");
         });
     },
     loadInfo() {
       this.$http
-        .get(`/medical_policy?pn=${this.currentPage}&size=${this.pageSize}`)
+        .get(`/company_policy?id=${this.searchEtd}`)
         .then((res) => {
-          console.log("加载医保返回数据" ,res);
+          console.log("初始化loadInfo" ,res);
           if (res.data.code == 200 && res.data.data != null) {
             this.tableData = res.data.data.list;
-            this.total = res.data.data.total;
+            this.total = res.data.data.list.length;
           } else alert("获取数据失败");
         });
     },
     doSave() {// 新增公司信息
-      this.$http.post("/medical_policy", this.cpyForm).then((res) => {
+      this.$http.post("/company", this.cpyForm).then((res) => {
         console.log("新增公司信息");
         console.log(res);
         if (res.data.code == 200) {

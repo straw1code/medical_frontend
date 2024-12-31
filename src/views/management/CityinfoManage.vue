@@ -118,7 +118,7 @@ methods: {
         console.log("加载城市信息", res);
         if (res.data.code == 200 && res.data.data != null) {
           this.tableData = res.data.data.list;
-          this.total = res.data.data.total;
+          this.total = res.data.data.list.length;
         } else alert("获取数据失败");
       });
   },

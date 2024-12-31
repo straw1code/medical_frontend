@@ -5,7 +5,7 @@
         <div style="margin-bottom: 5px; margin-top: 20px; text-align: center;">
             <el-input
                 v-model="searchEtd"
-                placeholder="请输入要查询的公司名称"
+                placeholder="请输入要查询的医生级别"
                 style="width: 70%"
                 @keyup.enter.native="search"
             >
@@ -18,22 +18,26 @@
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
         >
-            <el-table-column prop="id" label="医药公司编号"/>
-            <el-table-column prop="name" label="公司名称"/>
-            <el-table-column prop="phone" label="公司电话"/>           
+            <el-table-column prop="name" label="医生姓名"/>
+            <el-table-column prop="age" label="年龄"/>
+            <el-table-column prop="levelId" label="性别"/>
+            <el-table-column prop="id" label="级别"/>
+            <el-table-column prop="phone" label="手机号"/>
+            <el-table-column prop="cityName" label="诊治类别"/>           
             <el-table-column prop="operare" label="操作">
               <template v-slot="scope">
-                  <el-button type="success" @click="modifyBtn(scope.row)"
-                  >修改</el-button
-                  >
-                  <el-popconfirm
-                  title="确认删除?"
-                  @confirm="deleteReco(scope.row.id)"
-                  >
-                  <template #reference>
-                      <el-button type="danger">删除</el-button>
-                  </template>
-                  </el-popconfirm>
+                <el-button type="success" @click="modifyBtn(scope.row)"
+                >修改</el-button>
+                <el-popconfirm
+                    title="确认删除?"
+                    @confirm="deleteReco(scope.row.id)"
+                    >
+                    <template #reference>
+                        <el-button type="danger">删除</el-button>
+                    </template>
+                </el-popconfirm>
+                <el-button round type="plain" @click="resetCode(scope.row)"
+                >重置密码</el-button>
               </template>
             </el-table-column>
         </el-table>
@@ -54,58 +58,34 @@
         <!-- 新增表单 -->
         <el-dialog
         v-model="centerDialogVisible"
-        title="新增"
-        width="50%"
+        title="新增城市"
+        width="30%"
         align-center
         >
-        <el-form ref="form" :model="cpyForm" label-width="120px" :rules="rules">
-            <el-form-item label="公司名称" prop="name">
-                <el-input v-model="cpyForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="公司电话" prop="phone">
-                <el-input v-model="cpyForm.phone"></el-input>
-            </el-form-item>
-        </el-form>
-        <template #footer>
-            <span class="dialog-footer">
-            <el-button @click="centerDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="doSave"> 确定 </el-button>
-            </span>
-        </template>
-    </el-dialog>
-
-    <el-dialog 
-        v-model="centerDialogVisible1"
-        title="修改"
-        width="50%"
-        align-center
-        >
-        <!-- 修改dialog -->
-        <el-form ref="form" :model="modifyForm" label-width="120px" :rules="rules">
-            <el-form-item label="公司编号" prop="id">
-                <el-input disabled v-model="modifyForm.id"></el-input>
-            </el-form-item>
-            <el-form-item label="公司名称" prop="name">
-                <el-input v-model="modifyForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="公司电话" prop="phone">
-                <el-input v-model="modifyForm.phone"></el-input>
-            </el-form-item>
-        </el-form>
-        <template #footer>
-            <span class="dialog-footer">
-            <el-button @click="centerDialogVisible1 = false">取消</el-button>
-            <el-button type="primary" @click="doModify"> 确定 </el-button>
-            </span>
-        </template>
-    </el-dialog>
+        <!-- 城市下拉菜单 -->
+          <div style="display: flex; justify-content: center;">
+              <el-cascader
+                placeholder="请选择要新增的城市"
+                size="large"
+                :options="pcTextArr"
+                v-model="selectedOptions">
+              </el-cascader>
+          </div>
+            <template #footer>
+                <span class="dialog-footer">
+                <el-button @click="centerDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="doSave"> 确定 </el-button>
+                </span>
+            </template>
+        </el-dialog>
         </el-scrollbar>
     </div>
-</template>
-<script>
-import Breadcrumb from '@/components/Breadcrumb.vue';
-
-export default {
+  </template>
+  <script>
+  import Breadcrumb from '@/components/Breadcrumb.vue';
+  import { pcTextArr } from 'element-china-area-data'
+  
+  export default {
   data() {
     return {
       tableData: [],
@@ -128,6 +108,8 @@ export default {
       },
       modifyForm: {},
       centerDialogVisible1: false, // 修改触发的dialog窗口
+      pcTextArr,
+      selectedOptions: []// 城市二级选择
     };
   },
   created() {
@@ -135,23 +117,30 @@ export default {
   },
   methods: {
     search() {
-      console.log("搜索返回数据");
       this.loadInfo()
     },
     loadInfo() {
       this.$http
-        .get(`/company?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
+        .get(`/doctor?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
         .then((res) => {
-          console.log(res);
-          if (res.data.code == 200 && res.data.data != null) {
-            this.tableData = res.data.data.list;
-            this.total = res.data.data.list.length;
-          } else alert("获取数据失败");
+          console.log("初始页面(搜索)，加载医生信息", res);
+        //   if (res.data.code == 200 && res.data.data != null) {
+        //     this.tableData = res.data.data.list;
+        //     this.total = res.data.data.list.length;
+        //   } else alert("获取数据失败");
         });
     },
-    doSave() {// 新增公司信息
-      this.$http.post("/company", this.cpyForm).then((res) => {
-        console.log("新增公司信息");
+    modifyBtn(row) {
+    this.centerDialogVisible1 = true;
+    this.$nextTick(() => {
+      this.modifyForm = row;
+      console.log("modifyForm");
+      console.log(this.modifyForm);
+    });
+  },
+    doSave() {// 新增城市信息
+      this.$http.post(`/city?name=${this.selectedOptions[1]}`).then((res) => {
+        console.log("新增城市信息");
         console.log(res);
         if (res.data.code == 200) {
           this.$message({
@@ -163,32 +152,13 @@ export default {
         } else this.$message.error(res.data.message);
       });
     },
-    doModify() {
-      this.$http.post(`/company/${this.modifyForm.id}`, this.modifyForm).then((res) => {
-        console.log(res);
-        if (res.data.code == 200) {
-          this.$message({
-            message: "修改成功",
-            type: "success",
-          });
-          this.centerDialogVisible1 = false;
-          this.loadInfo();
-        } else this.$message.error(res.data.message);
-      });
-    },
-  
-    modifyBtn(row) {
-      this.centerDialogVisible1 = true;
-      this.$nextTick(() => {
-        this.modifyForm = row;
-        console.log("modifyForm", this.modifyForm);
-      })
-    },
+    
+   
     deleteReco(id) {
       console.log("delete");
       console.log(id);
-      this.$http.delete(`/company/${id}`).then((res) => {
-        console.log(res);
+      this.$http.delete(`/city/${id}`).then((res) => {
+        console.log("删除城市信息返回数据", res);
         if (res.data.code == 200) {
           this.$message({
             message: "删除成功",
@@ -198,8 +168,6 @@ export default {
         } else this.$message.error(res.data.message);
       });
     },
-    
-    
     save() {
       // 新增（记录）按钮
       this.$refs.form.validate((valid) => {
@@ -226,6 +194,9 @@ export default {
     resetInput() {
       this.searchEtdName = "";
     },
+    handleChange (value) {
+      console.log("城市级联下拉菜单", value)
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
@@ -237,31 +208,32 @@ export default {
       this.loadInfo();
     },
   },
-};
-</script>
-<style scoped>
-.welcome{
+  };
+  </script>
+  <style scoped>
+  .welcome{
   display: inline-block;
   font-size: larger;
   float: left;
   margin-top: 15px;
   
-}
-.logoutBtn{
+  }
+  .logoutBtn{
   float: right;
   margin-right: 9px;
   margin-top: 9px;
-}
-.header {
+  }
+  .header {
   margin-top: -10px;
   margin-left: -9px;
   height: 50px;
   background-color: rgba(0, 0, 0, 0.234);
-}
-.outbox {
+  }
+  .outbox {
   height: 100%;
-}
-.dialog-footer button:first-child {
+  }
+  .dialog-footer button:first-child {
   margin-right: 10px;
-}
-</style>
+  }
+  </style>
+  

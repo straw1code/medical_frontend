@@ -9,7 +9,8 @@ import router from './router/index.js'
 import '../public/static/css/global.css'
 
 import axios from "axios";
-axios.defaults.baseURL = "http://localhost:8080";
+// axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = "/api";
 
 const app = createApp(App)
 

@@ -18,11 +18,22 @@
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
         >
-            <el-table-column prop="id" label="药品编号"/>
-            <el-table-column prop="name" label="药品图片"/>
-            <el-table-column prop="name" label="药品名称"/>
-            <el-table-column prop="phone" label="销售地点"/>           
-            <el-table-column prop="phone" label="发布者"/>           
+            <el-table-column prop="drugId" label="药品编号"/>
+            <el-table-column prop="drugImg" label="药品图片" width="150" >
+              <template v-slot="scope">
+              <img :src="scope.row.drugImg" alt="" style="width: 120px;">
+              </template>
+            </el-table-column>
+            <el-table-column prop="drugName" label="药品名称"/>
+            <el-table-column prop="saleLocations" label="销售地点">  
+              <template #default="scope">
+                <div v-for="(location, index) in scope.row.saleLocations" :key="index">
+                  {{ location.saleName }}
+                </div>
+            </template> 
+            </el-table-column>
+              
+            <el-table-column prop="publisher" label="发布者"/>           
             <el-table-column prop="operare" label="操作">
               <template v-slot="scope">
                   <el-button type="success" @click="modifyBtn(scope.row)"
@@ -60,12 +71,42 @@
         width="50%"
         align-center
         >
-        <el-form ref="form" :model="cpyForm" label-width="120px" :rules="rules">
-            <el-form-item label="公司名称" prop="name">
-                <el-input v-model="cpyForm.name"></el-input>
+        <el-form ref="form" :model="addForm" label-width="120px" :rules="rules">
+            <el-form-item label="药品名称" prop="name">
+                <el-input v-model="addForm.name"></el-input>
             </el-form-item>
-            <el-form-item label="公司电话" prop="phone">
-                <el-input v-model="cpyForm.phone"></el-input>
+            <el-form-item label="药品信息" prop="info">
+                <el-input v-model="addForm.info"></el-input>
+            </el-form-item>
+            <el-form-item label="药品功效" prop="effect">
+                <el-input v-model="addForm.effect"></el-input>
+            </el-form-item>
+            <el-form-item label="药品图片" prop="img">
+              <el-upload
+                      action="#"
+                      :show-file-list="false"
+                      :auto-upload="false"
+                      :multiple="false"
+                      :on-change="uploadFile"
+                      drag
+                      accept="image/jpg,image/jpeg,image/png">
+                      <i v-if="imageUrl" class="el-icon-circle-close deleteImg" @click.stop="handleRemove"></i>
+                      <img width="200px" v-if="imageUrl" :src="imageUrl" class="el-upload--picture-car" />
+                      <div v-else>
+                        <i class="el-icon-picture" style="margin-top: 40px; font-size: 40px; color: #999a9c"></i>
+                          <div>上传图片</div>
+                          <div>格式为png、jpeg或jpg</div>
+                      </div>
+                  </el-upload>
+            </el-form-item>
+            <el-form-item label="销售药店" prop="store">
+              <el-cascader
+                ref="cascader"
+                placeholder="请选择销售药店"
+                :options="options"
+                :props="props"
+                @change="handleChange"
+                clearable></el-cascader>
             </el-form-item>
         </el-form>
         <template #footer>
@@ -117,21 +158,47 @@ export default {
       searchEtd: "",
       centerDialogVisible: false,
       rules: {
-        name: [{ required: true,  message: "请输入公司名称", trigger: "blur" }],
-        phone: [{ required: true, 
-                  pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                  message: "请输入有效的公司电话", 
-                  trigger: "blur" 
-               }],
+        name: [{ required: true,  message: "请输入药品名称", trigger: "blur" }],
+        info: [{ required: true,  message: "请输入药品信息", trigger: "blur" }],
+        effect: [{ required: true,  message: "请输入药品功效", trigger: "blur" }],
+        store: [{ required: true,  message: "请选择销售药店", trigger: "blur" }],
+        img: [{ required: true,  message: "请上传药品图片", trigger: "blur" }],
       },
       cpyForm: {//新增弹出框
         name: "",
-        phone: "",
+        info: "",
+        effect: "",
+        img: "",
+        store: [],
+      },
+      addForm: {
+        name: "",
+        info: "",
+        effect: "",
+        img: "",
+        store: [],
       },
       modifyForm: {},
       centerDialogVisible1: false, // 修改触发的dialog窗口
+      imageUrl: "",//上传图片
+      props: { 
+        multiple: true ,
+        emitPath: false,
+        value: 'saleId',
+        label: 'saleName'
+      },//新增dialog中的级联组件要用
+      options: []
     };
   },
+  // watch: {
+  //   options: {
+  //     handler(newVal, oldVal) {
+  //       this.addForm.store = newVal;
+  //       console.log("addForm.store", this.addForm.store);
+  //     },
+  //     deep: true,
+  //   },
+  // },
   created() {
     this.loadInfo();
   },
@@ -141,9 +208,9 @@ export default {
     },
     loadInfo() {
       this.$http
-        .get(`/company?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
+        .get(`/drug?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
         .then((res) => {
-          console.log(res);
+          console.log("初试页面加载药品信息", res);
           if (res.data.code == 200 && res.data.data != null) {
             this.tableData = res.data.data.list;
             this.total = res.data.data.total;
@@ -198,7 +265,24 @@ export default {
         } else this.$message.error(res.data.message);
       });
     },
-    
+    uploadFile(item) {
+        console.log("uploadFile接收的item参数");
+        console.log(item);
+        let formData = new FormData()
+        formData.append('file', item.raw)
+        this.formData = item.raw; // 图片文件
+        this.$http.post("/image", formData ).then(res => {
+          console.log("uploadFile图片上传返回数据");
+          console.log(res);
+          if(res.data.code == 1){
+            this.form.gpicture = res.data.data;
+          }
+
+        })
+        this.imageUrl = URL.createObjectURL(item.raw); // 图片上传浏览器回显地址
+        console.log("imageUrl", this.imageUrl)
+        console.log("formData", this.formData)
+      },
     
     save() {
       // 新增（记录）按钮
@@ -214,11 +298,32 @@ export default {
         }
       });
     },
+    handleChange(val){
+			let nodesInfo = this.$refs['cascader'].getCheckedNodes()
+			// 清空 addForm.store
+      this.addForm.store = [];
+      // 遍历 nodesInfo 数组
+      nodesInfo.forEach(node => {
+        // 将 data 对象追加到 addForm.store 中
+        this.addForm.store.push(node.data);
+      });
+      console.log("handleChange-addForm.store", this.addForm.store);
+		},
     resetForm() {
       this.$refs.form.resetFields();
     },
     addBtn() {
       this.centerDialogVisible = true;
+      this.$http.get("/sale/all").then(res => {
+          console.log("新增表单选择销售药店");
+          console.log(res);
+          if(res.data.code == 200){
+            this.options = res.data.data
+            // this.addForm.store = res.data.data
+            // console.log("addForm.store", this.addForm.store);
+          }
+
+        })
       this.$nextTick(() => {
         this.resetForm();
       });

@@ -6,7 +6,7 @@
     <el-container>
       <el-header style="text-align: right; font-size: 12px">
         <span style="float: left; font-size: 40px; color:rgb(82, 92, 118);">
-          <img src="../../public/static/img/logo.jpg" height="50px" style="vertical-align: middle;" >
+          <img src="../../../public/static/img/logo.jpg" height="50px" style="vertical-align: middle;" >
           慧医数字医疗应用系统</span>
           <Header></Header>
       </el-header>

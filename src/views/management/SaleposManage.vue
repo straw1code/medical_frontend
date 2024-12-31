@@ -25,8 +25,7 @@
           <el-table-column prop="operare" label="操作">
             <template v-slot="scope">
                 <el-button type="success" @click="modifyBtn(scope.row)"
-                >修改</el-button
-                >
+                >修改</el-button>
                 <el-popconfirm
                 title="确认删除?"
                 @confirm="deleteReco(scope.row)"
@@ -95,6 +94,9 @@
           <el-form-item label="药店电话" prop="salePhone">
               <el-input v-model="modifyForm.salePhone"></el-input>
           </el-form-item>
+          <el-form-item label="药店地址" prop="address">
+              <el-input v-model="modifyForm.address"></el-input>
+          </el-form-item>
       </el-form>
       <template #footer>
           <span class="dialog-footer">
@@ -130,6 +132,7 @@ data() {
     cpyForm: {//新增弹出框
       saleName: "",
       salePhone: "",
+      address : "",
     },
     modifyForm: {},
     centerDialogVisible1: false, // 修改触发的dialog窗口
