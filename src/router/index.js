@@ -13,7 +13,7 @@ import DoctorManage from '@/views/management/DoctorManage.vue'
 import MaterialsManage from '@/views/management/MaterialsManage.vue'
 
 const routes = [
-    { path: "/", redirect: "/login" },
+    { path: "/", redirect: "/main" },
     { path: "/login", component: Login },
     { 
         path: "/main", 

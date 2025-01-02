@@ -66,19 +66,99 @@
         width="30%"
         align-center
         >
-        <!-- 城市下拉菜单 -->
-          <div style="display: flex; justify-content: center;">
-              <el-cascader
-                placeholder="请选择要新增的城市"
-                size="large"
-                :options="pcTextArr"
-                v-model="selectedOptions">
-              </el-cascader>
-          </div>
+          <el-form ref="form" :model="cpyForm" label-width="120px" :rules="rules">
+              <el-form-item label="医生姓名" prop="name">
+                  <el-input v-model="cpyForm.name"></el-input>
+              </el-form-item>
+              <el-form-item label="用户名" prop="username">
+                  <el-input v-model="cpyForm.username"></el-input>
+              </el-form-item>
+              <el-form-item label="年龄" prop="age">
+                <el-input v-model="cpyForm.age"></el-input>
+              </el-form-item>
+              <el-form-item label="性别" prop="sex">
+                <el-cascader
+                    placeholder="请选择性别"
+                    size="large"
+                    :options="pcTextArr"
+                    v-model="cpyForm.sex">
+                </el-cascader>
+              </el-form-item>
+              <el-form-item label="级别" prop="level">
+                <el-cascader
+                    placeholder="请选择级别"
+                    size="large"
+                    :options="pcTextArr"
+                    v-model="cpyForm.level">
+                </el-cascader>
+              </el-form-item>
+              <el-form-item label="手机号" prop="phone">
+                  <el-input v-model="cpyForm.phone"></el-input>
+              </el-form-item>
+              <el-form-item label="密码" prop="title">
+                  <el-input v-model="cpyForm.title"></el-input>
+              </el-form-item>
+              <el-form-item label="确认密码" prop="title">
+                  <el-input v-model="cpyForm.title"></el-input>
+              </el-form-item>
+              <el-form-item label="诊治类别" prop="cityName">
+                <el-cascader
+                    placeholder="请选择诊治类别"
+                    size="large"
+                    :options="pcTextArr"
+                    v-model="cpyForm.cityName">
+                </el-cascader>
+              </el-form-item>
+          </el-form>
             <template #footer>
                 <span class="dialog-footer">
                 <el-button @click="centerDialogVisible = false">取消</el-button>
                 <el-button type="primary" @click="doSave"> 确定 </el-button>
+                </span>
+            </template>
+        </el-dialog>
+        <!-- 修改表单 -->
+        <el-dialog 
+            v-model="centerDialogVisible1"
+            title="修改"
+            width="50%"
+            align-center
+            >
+            <!-- 修改dialog -->
+            <el-form ref="form" :model="modifyForm" label-width="120px" :rules="rules">
+                <el-form-item label="医生姓名" prop="name">
+                    <el-input v-model="modifyForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="年龄" prop="age">
+                    <el-input v-model="modifyForm.age"></el-input>
+                </el-form-item>
+                <el-form-item label="性别" prop="sex">
+                  <el-cascader
+                        placeholder="请选择性别"
+                        size="large"
+                        :options="sex"
+                        v-model="modifyForm.sex">
+                    </el-cascader>
+                </el-form-item>
+                <el-form-item label="级别" prop="level">
+                    <el-cascader
+                        placeholder="请选择要新增的城市"
+                        size="large"
+                        :options="options"
+                        v-model="modifyForm.level">
+                    </el-cascader>
+                </el-form-item>
+                <el-form-item label="手机号" prop="phone">
+                    <el-input v-model="modifyForm.phone"></el-input>
+                </el-form-item>
+                <el-form-item label="诊治类别" prop="type">
+                    <el-input v-model="modifyForm.type"></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                <el-button @click="centerDialogVisible1 = false">取消</el-button>
+                <el-button type="primary" @click="doModify"> 确定 </el-button>
                 </span>
             </template>
         </el-dialog>
@@ -87,9 +167,11 @@
   </template>
   <script>
   import Breadcrumb from '@/components/Breadcrumb.vue';
-  import { pcTextArr } from 'element-china-area-data'
   
   export default {
+    created() {
+      this.loadInfo();
+    },
   data() {
     return {
       tableData: [],
@@ -112,12 +194,17 @@
       },
       modifyForm: {},
       centerDialogVisible1: false, // 修改触发的dialog窗口
-      pcTextArr,
-      selectedOptions: []// 城市二级选择
-    };
-  },
-  created() {
-    this.loadInfo();
+      sex: [
+        {
+          value: '2',
+          label: '女',
+        },
+        {
+          value: '1',
+          label: '男',
+        },
+      ],
+    }
   },
   methods: {
     search() {
@@ -131,7 +218,8 @@
           if (res.data.code == 200 && res.data.data != null) {
             this.tableData = res.data.data.list;
             this.total = res.data.data.list.length;
-          } else alert("获取数据失败");
+          } else {alert(res.data.message);
+            this.$router.push("/login")}
         });
     },
     modifyBtn(row) {
@@ -212,7 +300,7 @@
       this.loadInfo();
     },
   },
-  };
+}
   </script>
   <style scoped>
   .welcome{

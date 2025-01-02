@@ -33,7 +33,7 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/medipolicy_manage">医药公司政策管理</router-link>
+      <router-link tag="span" to="/main/medipolicy_manage">医药公司政策管理DONE</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>

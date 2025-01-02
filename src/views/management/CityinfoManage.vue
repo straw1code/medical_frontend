@@ -119,7 +119,9 @@ methods: {
         if (res.data.code == 200 && res.data.data != null) {
           this.tableData = res.data.data.list;
           this.total = res.data.data.list.length;
-        } else alert("获取数据失败");
+        } else {
+          alert(res.data.message);
+          this.$router.push("/login")}
       });
   },
   doSave() {// 新增城市信息

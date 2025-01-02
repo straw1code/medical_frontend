@@ -14,6 +14,7 @@
           <el-button type="success" @click="addBtn">新增</el-button>
       </div>
       <el-scrollbar>
+        <!-- 数据表 -->
       <el-table :data="tableData" :row-style="{height: '160px'}" 
       :header-cell-style="{'text-align':'center'}"
       :cell-style="{'text-align':'center'}"
@@ -147,19 +148,20 @@ methods: {
   },
   loadInfo() {
     this.$http
-      .get(`/sale?pn=${this.currentPage}&size=${this.pageSize}`)
+      .get(`/sale?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
       .then((res) => {
-        console.log("loadSaleInfo");
+        console.log("页面初始化，销售地点列表res");
         console.log(res);
-        if (res.data.code == 200 && res.data.data.list != null) {
+        if (res.data.code == 200) {
           this.tableData = res.data.data.list;
           this.total = res.data.data.total;
-        } else alert("获取数据失败");
+        } else {alert(res.data.message);
+          this.$router.push("/login")}
       });
   },
   doSave() {// 新增公司信息
     this.$http.post("/sale", this.cpyForm).then((res) => {
-      console.log("新增药店信息");
+      console.log("新增药店信息res");
       console.log(res);
       if (res.data.code == 200) {
         this.$message({
@@ -173,7 +175,7 @@ methods: {
   },
   doModify() {
     this.$http.put(`/sale/${this.modifyForm.saleId}`, this.modifyForm).then((res) => {
-      console.log("修改请求返回数据", res);
+      console.log("修改药店信息res", res);
       if (res.data.code == 200) {
         this.$message({
           message: "修改成功",
