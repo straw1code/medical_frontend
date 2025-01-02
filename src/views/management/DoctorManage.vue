@@ -14,6 +14,7 @@
             <el-button type="success" @click="addBtn">新增</el-button>
         </div>
         <el-scrollbar>
+          <!-- 数据表 -->
         <el-table :data="tableData" :row-style="{height: '160px'}" 
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
@@ -27,8 +28,9 @@
             </el-table-column>
             <el-table-column prop="level" label="级别"/>
             <el-table-column prop="phone" label="手机号"/>
-            <el-table-column prop="type" label="诊治类别"/>           
-            <el-table-column prop="operare" label="操作" width="260px">
+            <el-table-column prop="type" label="诊治类别"/>   
+            <el-table-column prop="hospital" label="所属医院"/>   
+            <el-table-column prop="operate" label="操作" width="260px">
               <template v-slot="scope">
                 <el-button type="success" @click="modifyBtn(scope.row)"
                 >修改</el-button>
@@ -62,7 +64,7 @@
         <!-- 新增表单 -->
         <el-dialog
         v-model="centerDialogVisible"
-        title="新增城市"
+        title="新增"
         width="30%"
         align-center
         >
@@ -73,41 +75,44 @@
               <el-form-item label="用户名" prop="username">
                   <el-input v-model="cpyForm.username"></el-input>
               </el-form-item>
+              <el-form-item label="登录密码" prop="psw">
+                  <el-input v-model="cpyForm.psw"></el-input>
+              </el-form-item>
               <el-form-item label="年龄" prop="age">
                 <el-input v-model="cpyForm.age"></el-input>
               </el-form-item>
               <el-form-item label="性别" prop="sex">
                 <el-cascader
+                    size="mini"
+                    :props="props"
                     placeholder="请选择性别"
-                    size="large"
-                    :options="pcTextArr"
+                    :options="sex"
                     v-model="cpyForm.sex">
                 </el-cascader>
               </el-form-item>
-              <el-form-item label="级别" prop="level">
+              <el-form-item label="级别" prop="levelId">
                 <el-cascader
+                    :props="props"
                     placeholder="请选择级别"
                     size="large"
-                    :options="pcTextArr"
-                    v-model="cpyForm.level">
+                    :options="levelOptions"
+                    v-model="cpyForm.levelId">
                 </el-cascader>
               </el-form-item>
               <el-form-item label="手机号" prop="phone">
                   <el-input v-model="cpyForm.phone"></el-input>
               </el-form-item>
-              <el-form-item label="密码" prop="title">
-                  <el-input v-model="cpyForm.title"></el-input>
-              </el-form-item>
-              <el-form-item label="确认密码" prop="title">
-                  <el-input v-model="cpyForm.title"></el-input>
-              </el-form-item>
-              <el-form-item label="诊治类别" prop="cityName">
+              <el-form-item label="诊治类别" prop="typeId">
                 <el-cascader
+                    :props="props"
                     placeholder="请选择诊治类别"
                     size="large"
-                    :options="pcTextArr"
-                    v-model="cpyForm.cityName">
+                    :options="typeOptions"
+                    v-model="cpyForm.typeId">
                 </el-cascader>
+              </el-form-item>
+              <el-form-item label="所属医院" prop="hospital">
+                  <el-input v-model="cpyForm.hospital"></el-input>
               </el-form-item>
           </el-form>
             <template #footer>
@@ -136,23 +141,34 @@
                   <el-cascader
                         placeholder="请选择性别"
                         size="large"
+                        :props="props"
                         :options="sex"
                         v-model="modifyForm.sex">
                     </el-cascader>
                 </el-form-item>
-                <el-form-item label="级别" prop="level">
+                <el-form-item label="级别" prop="levelId">
                     <el-cascader
-                        placeholder="请选择要新增的城市"
+                        :props="props"
+                        placeholder="请选择医生级别"
                         size="large"
-                        :options="options"
-                        v-model="modifyForm.level">
+                        :options="levelOptions"
+                        v-model="modifyForm.levelId">
                     </el-cascader>
                 </el-form-item>
                 <el-form-item label="手机号" prop="phone">
                     <el-input v-model="modifyForm.phone"></el-input>
                 </el-form-item>
-                <el-form-item label="诊治类别" prop="type">
-                    <el-input v-model="modifyForm.type"></el-input>
+                <el-form-item label="诊治类别" prop="typeId">
+                  <el-cascader
+                        :props="props"
+                        placeholder="请选择医生诊治类别"
+                        size="large"
+                        :options="typeOptions"
+                        v-model="modifyForm.typeId">
+                  </el-cascader>
+                </el-form-item>
+                <el-form-item label="所属医院" prop="hospital">
+                    <el-input v-model="modifyForm.hospital"></el-input>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -181,29 +197,41 @@
       searchEtd: "",
       centerDialogVisible: false,
       rules: {
-        name: [{ required: true,  message: "请输入公司名称", trigger: "blur" }],
+        name: [{ required: true,  message: "请输入医生姓名", trigger: "blur" }],
+        age: [{ required: true,  message: "请输入医生年龄", trigger: "blur" }],
+        levelId: [{ required: true,  message: "请选择医生级别", trigger: "blur" }],
+        sex: [{ required: true,  message: "请选择医生性别", trigger: "blur" }],
         phone: [{ required: true, 
                   pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
                   message: "请输入有效的公司电话", 
                   trigger: "blur" 
                }],
+        typeId: [{ required: true,  message: "请选择医生的诊治类别", trigger: "blur" }],
+        hospital: [{ required: true,  message: "请输入医生所属的医院", trigger: "blur" }],
+        
       },
       cpyForm: {//新增弹出框
-        name: "",
-        phone: "",
       },
       modifyForm: {},
       centerDialogVisible1: false, // 修改触发的dialog窗口
       sex: [
         {
-          value: '2',
-          label: '女',
+          id: 2,
+          name: '女',
         },
         {
-          value: '1',
-          label: '男',
+          id: 1,
+          name: '男',
         },
       ],
+      levelOptions: [],
+      typeOptions: [],
+      props: { 
+        multiple: false ,
+        emitPath: false,
+        value: 'id',
+        label: 'name'
+      },//新增dialog中的级联组件要用
     }
   },
   methods: {
@@ -222,18 +250,36 @@
             this.$router.push("/login")}
         });
     },
+    getLevelOptions() {
+      this.$http.get(`/doctor_level`).then((res) => {
+        console.log("获得医生级别列表res", res);
+        if (res.data.code == 200) {
+          this.levelOptions = res.data.data;
+        } else this.$message.error(res.data.message);
+      });
+    },
+    getTypeOptions() {
+      this.$http.get(`/treat_type`).then((res) => {
+        console.log("获得诊治类型列表res", res);
+        if (res.data.code == 200) {
+          this.typeOptions = res.data.data;
+        } else this.$message.error(res.data.message);
+      });
+    },
     modifyBtn(row) {
-    this.centerDialogVisible1 = true;
-    this.$nextTick(() => {
-      this.modifyForm = row;
-      console.log("modifyForm");
-      console.log(this.modifyForm);
-    });
+      this.getLevelOptions();
+      this.getTypeOptions();
+      this.centerDialogVisible1 = true;
+    
+      this.$nextTick(() => {
+        this.modifyForm = row;
+        console.log("modifyForm");
+        console.log(this.modifyForm);
+      });
   },
     doSave() {// 新增城市信息
-      this.$http.post(`/city?name=${this.selectedOptions[1]}`).then((res) => {
-        console.log("新增城市信息");
-        console.log(res);
+      this.$http.post(`/doctor`, this.cpyForm).then((res) => {
+        console.log("新增医生信息res", res);
         if (res.data.code == 200) {
           this.$message({
             message: "新增成功",
@@ -244,13 +290,27 @@
         } else this.$message.error(res.data.message);
       });
     },
-    
+    doModify() {
+      console.log("doModify modifyForm", this.modifyForm);
+      // console.log(typeof(this.modifyForm.id));
+      this.$http.put(`/doctor/${this.modifyForm.id}`, this.modifyForm).then((res) => {
+        console.log("修改医生信息res", res);
+        if (res.data.code == 200) {
+          this.$message({
+            message: "修改成功",
+            type: "success",
+          });
+          this.centerDialogVisible1 = false;
+          this.loadInfo();
+        } else this.$message.error(res.data.message);
+      })
+    },
    
     deleteReco(id) {
       console.log("delete");
       console.log(id);
-      this.$http.delete(`/city/${id}`).then((res) => {
-        console.log("删除城市信息返回数据", res);
+      this.$http.delete(`/doctor/${id}`).then((res) => {
+        console.log("删除医生信息res", res);
         if (res.data.code == 200) {
           this.$message({
             message: "删除成功",
@@ -278,6 +338,8 @@
       this.$refs.form.resetFields();
     },
     addBtn() {
+      this.getLevelOptions();
+      this.getTypeOptions();
       this.centerDialogVisible = true;
       this.$nextTick(() => {
         this.resetForm();

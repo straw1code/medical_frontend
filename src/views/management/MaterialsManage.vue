@@ -5,7 +5,7 @@
         <div style="margin-bottom: 5px; margin-top: 20px; text-align: center;">
             <el-input
                 v-model="searchEtd"
-                placeholder="请输入要查询的医生级别"
+                placeholder="请输入要查询的材料标题"
                 style="width: 70%"
                 @keyup.enter.native="search"
             >
@@ -14,34 +14,32 @@
             <el-button type="success" @click="addBtn">新增</el-button>
         </div>
         <el-scrollbar>
+          <!-- 数据表 -->
         <el-table :data="tableData" :row-style="{height: '160px'}" 
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
         >
-            <el-table-column prop="name" label="医生姓名"/>
-            <el-table-column prop="age" label="年龄"/>
-            <el-table-column prop="levelId" label="性别"/>
-            <el-table-column prop="id" label="级别"/>
-            <el-table-column prop="phone" label="手机号"/>
-            <el-table-column prop="cityName" label="诊治类别"/>           
-            <el-table-column prop="operare" label="操作" width="260px">
+            <el-table-column width="120px" prop="id" label="材料编号"/>
+            <el-table-column prop="title" label="材料标题"/>
+            <el-table-column prop="message" label="材料内容"/>
+            <el-table-column prop="operare" label="操作">
               <template v-slot="scope">
-                <el-button type="success" @click="modifyBtn(scope.row)"
-                >修改</el-button>
-                <el-popconfirm
-                    title="确认删除?"
-                    @confirm="deleteReco(scope.row.id)"
-                    >
-                    <template #reference>
-                        <el-button type="danger">删除</el-button>
-                    </template>
-                </el-popconfirm>
-                <el-button round type="plain" @click="resetCode(scope.row)"
-                >重置密码</el-button>
+                  <el-button type="success" @click="modifyBtn(scope.row)"
+                  >修改</el-button
+                  >
+                  <el-popconfirm
+                  title="确认删除?"
+                  @confirm="deleteReco(scope.row.id)"
+                  >
+                  <template #reference>
+                      <el-button type="danger">删除</el-button>
+                  </template>
+                  </el-popconfirm>
               </template>
             </el-table-column>
         </el-table>
         <br />
+        <!-- 分页组件 -->
         <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
@@ -58,26 +56,50 @@
         <!-- 新增表单 -->
         <el-dialog
         v-model="centerDialogVisible"
-        title="新增城市"
-        width="30%"
+        title="新增"
+        width="50%"
         align-center
         >
-        <!-- 城市下拉菜单 -->
-          <div style="display: flex; justify-content: center;">
-              <el-cascader
-                placeholder="请选择要新增的城市"
-                size="large"
-                :options="pcTextArr"
-                v-model="selectedOptions">
-              </el-cascader>
-          </div>
-            <template #footer>
-                <span class="dialog-footer">
-                <el-button @click="centerDialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="doSave"> 确定 </el-button>
-                </span>
-            </template>
-        </el-dialog>
+        <el-form ref="form" :model="cpyForm" label-width="120px" :rules="rules">
+            <el-form-item label="材料标题" prop="title">
+                <el-input v-model="cpyForm.title"></el-input>
+            </el-form-item>
+            <el-form-item label="材料内容" prop="message">
+                <el-input v-model="cpyForm.message" :rows="2"
+                type="textarea"></el-input>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+            <el-button @click="centerDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="doSave"> 确定 </el-button>
+            </span>
+        </template>
+      </el-dialog>
+      <!-- 修改表单 -->
+      <el-dialog 
+        v-model="centerDialogVisible1"
+        title="修改"
+        width="50%"
+        align-center
+        >
+        <!-- 修改dialog -->
+        <el-form ref="form" :model="modifyForm" label-width="120px" :rules="rules">
+          <el-form-item label="材料标题" prop="title">
+                <el-input v-model="modifyForm.title"></el-input>
+            </el-form-item>
+            <el-form-item label="材料内容" prop="message">
+                <el-input v-model="modifyForm.message" :rows="2"
+                type="textarea"></el-input>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+            <el-button @click="centerDialogVisible1 = false">取消</el-button>
+            <el-button type="primary" @click="doModify"> 确定 </el-button>
+            </span>
+        </template>
+    </el-dialog>
         </el-scrollbar>
     </div>
   </template>
@@ -95,11 +117,8 @@
       searchEtd: "",
       centerDialogVisible: false,
       rules: {
-        name: [{ required: true,  message: "请输入公司名称", trigger: "blur" }],
-        phone: [{ required: true, 
-                  pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                  message: "请输入有效的公司电话", 
-                  trigger: "blur" 
+        title: [{ required: true,  message: "请输入材料标题", trigger: "blur" }],
+        message: [{ required: true, message: "请输入材料内容", trigger: "blur" 
                }],
       },
       cpyForm: {//新增弹出框
@@ -121,9 +140,9 @@
     },
     loadInfo() {
       this.$http
-        .get(`/doctor?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
+        .get(`/material?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
         .then((res) => {
-          console.log("初始页面(搜索)，加载医生信息", res);
+          console.log("初始页面(搜索)，加载必备材料信息res", res);
           if (res.data.code == 200 && res.data.data != null) {
             this.tableData = res.data.data.list;
             this.total = res.data.data.list.length;
@@ -140,9 +159,8 @@
     });
   },
     doSave() {// 新增城市信息
-      this.$http.post(`/city?name=${this.selectedOptions[1]}`).then((res) => {
-        console.log("新增城市信息");
-        console.log(res);
+      this.$http.post(`/material`, this.cpyForm).then((res) => {
+        console.log("新增材料信息res", res);
         if (res.data.code == 200) {
           this.$message({
             message: "新增成功",
@@ -158,13 +176,26 @@
     deleteReco(id) {
       console.log("delete");
       console.log(id);
-      this.$http.delete(`/city/${id}`).then((res) => {
-        console.log("删除城市信息返回数据", res);
+      this.$http.delete(`/material/${id}`).then((res) => {
+        console.log("删除材料信息res", res);
         if (res.data.code == 200) {
           this.$message({
             message: "删除成功",
             type: "success",
           });
+          this.loadInfo();
+        } else this.$message.error(res.data.message);
+      });
+    },
+    doModify() {
+      this.$http.put(`/material/${this.modifyForm.id}`, this.modifyForm).then((res) => {
+        console.log("修改材料res", res);
+        if (res.data.code == 200) {
+          this.$message({
+            message: "修改成功",
+            type: "success",
+          });
+          this.centerDialogVisible1 = false;
           this.loadInfo();
         } else this.$message.error(res.data.message);
       });

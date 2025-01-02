@@ -37,11 +37,11 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/docinfo_manage">医生信息管理</router-link>
+      <router-link tag="span" to="/main/docinfo_manage">医生信息管理(剩下新增</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/materials_manage">必备材料管理</router-link>
+      <router-link tag="span" to="/main/materials_manage">必备材料管理DONE</router-link>
     </el-menu-item>
   </el-menu>
 </template>
