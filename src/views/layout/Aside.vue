@@ -17,7 +17,7 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/salepos_manage">销售地点管理WAIT</router-link>
+      <router-link tag="span" to="/main/salepos_manage">销售地点管理DONE</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
@@ -25,7 +25,7 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/medinfo_manage">药品信息管理WAIT</router-link>
+      <router-link tag="span" to="/main/medinfo_manage">药品信息管理DONE</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>

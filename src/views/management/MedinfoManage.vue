@@ -26,6 +26,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="drugName" label="药品名称"/>
+            <el-table-column prop="drugInfo" label="药品信息"/>
+            <el-table-column prop="drugEffect" label="药品功效"/>
             <el-table-column prop="saleLocations" label="销售地点">  
               <template #default="scope">
                 <div v-for="(location, index) in scope.row.saleLocations" :key="index">
@@ -42,7 +44,7 @@
                   >
                   <el-popconfirm
                   title="确认删除?"
-                  @confirm="deleteReco(scope.row.id)"
+                  @confirm="deleteReco(scope.row)"
                   >
                   <template #reference>
                       <el-button type="danger">删除</el-button>
@@ -73,16 +75,16 @@
         align-center
         >
         <el-form ref="form" :model="addForm" label-width="120px" :rules="rules">
-            <el-form-item label="药品名称" prop="name">
-                <el-input v-model="addForm.name"></el-input>
+            <el-form-item label="药品名称" prop="drugName">
+                <el-input v-model="addForm.drugName"></el-input>
             </el-form-item>
-            <el-form-item label="药品信息" prop="info">
-                <el-input v-model="addForm.info"></el-input>
+            <el-form-item label="药品信息" prop="drugInfo">
+                <el-input v-model="addForm.drugInfo"></el-input>
             </el-form-item>
-            <el-form-item label="药品功效" prop="effect">
-                <el-input v-model="addForm.effect"></el-input>
+            <el-form-item label="药品功效" prop="drugEffect">
+                <el-input v-model="addForm.drugEffect"></el-input>
             </el-form-item>
-            <el-form-item label="药品图片" prop="img">
+            <el-form-item label="药品图片" prop="drugImg">
               <el-upload
                       action="#"
                       :show-file-list="false"
@@ -100,7 +102,7 @@
                       </div>
               </el-upload>
             </el-form-item>
-            <el-form-item label="销售药店" prop="store">
+            <el-form-item label="销售药店" prop="saleId">
               <el-cascader
                 ref="cascader"
                 placeholder="请选择销售药店"
@@ -109,6 +111,9 @@
                 @change="handleChange"
                 clearable>
               </el-cascader>
+            </el-form-item>
+            <el-form-item label="发布者" prop="publisher">
+                <el-input v-model="addForm.publisher"></el-input>
             </el-form-item>
         </el-form>
         <template #footer>
@@ -127,14 +132,47 @@
         >
         <!-- 修改dialog -->
         <el-form ref="form" :model="modifyForm" label-width="120px" :rules="rules">
-            <el-form-item label="公司编号" prop="id">
-                <el-input disabled v-model="modifyForm.id"></el-input>
+            <el-form-item label="药品名称" prop="name">
+                <el-input v-model="modifyForm.drugName"></el-input>
             </el-form-item>
-            <el-form-item label="公司名称" prop="name">
-                <el-input v-model="modifyForm.name"></el-input>
+            <el-form-item label="药品信息" prop="info">
+                <el-input :rows="3"
+                type="textarea" v-model="modifyForm.drugInfo"></el-input>
             </el-form-item>
-            <el-form-item label="公司电话" prop="phone">
-                <el-input v-model="modifyForm.phone"></el-input>
+            <el-form-item label="药品功效" prop="effect">
+                <el-input :rows="3"
+                type="textarea" v-model="modifyForm.drugEffect"></el-input>
+            </el-form-item>
+            <el-form-item label="药品图片" prop="drugImg">
+              <el-upload
+                      action="#"
+                      :show-file-list="false"
+                      :auto-upload="false"
+                      :multiple="false"
+                      :on-change="uploadFile"
+                      drag
+                      accept="image/jpg,image/jpeg,image/png">
+                      <i v-if="imageUrl" class="el-icon-circle-close deleteImg" @click.stop="handleRemove"></i>
+                      <img width="200px" v-if="imageUrl" :src="imageUrl" class="el-upload--picture-car" />
+                      <div v-else>
+                        <i class="el-icon-picture" style="margin-top: 40px; font-size: 40px; color: #999a9c"></i>
+                          <div>上传图片</div>
+                          <div>格式为png、jpeg或jpg</div>
+                      </div>
+              </el-upload>
+            </el-form-item>
+            <el-form-item label="发布者" prop="publisher">
+                <el-input v-model="modifyForm.publisher"></el-input>
+            </el-form-item>
+            <el-form-item label="销售药店" prop="saleLocations">
+              <el-cascader
+                ref="cascader"
+                placeholder="请选择销售药店"
+                :options="options"
+                :props="props"
+                @change="handleChange"
+                clearable>
+              </el-cascader>
             </el-form-item>
         </el-form>
         <template #footer>
@@ -174,13 +212,14 @@ export default {
         store: [],
       },
       addForm: {
-        name: "",
-        info: "",
-        effect: "",
-        img: "",
-        store: [],
+        drugName: "",
+        drugInfo: "",
+        drugEffect: "",
+        drugImg: "",
+        saleId: [],
       },
-      modifyForm: {},
+      modifyForm: {
+      },
       centerDialogVisible1: false, // 修改触发的dialog窗口
       imageUrl: "",//上传图片
       props: { 
@@ -192,15 +231,16 @@ export default {
       options: []
     };
   },
-  // watch: {
-  //   options: {
-  //     handler(newVal, oldVal) {
-  //       this.addForm.store = newVal;
-  //       console.log("addForm.store", this.addForm.store);
-  //     },
-  //     deep: true,
-  //   },
-  // },
+  watch: {
+    // 监听modifyForm.saleLocations的变化并更新selectedSaleLocationIds
+    'modifyForm.saleLocations': {
+      handler(newVal) {
+        console.log("handler newVal", newVal);
+        // this.modifyForm.saleLocations = newVal.map(location => location.saleId);
+      },
+      immediate: true // 立即触发一次handler，确保初始值也被处理
+    }
+  },
   created() {
     this.loadInfo();
   },
@@ -220,10 +260,10 @@ export default {
             this.$router.push("/login")}
         });
     },
-    doSave() {// 新增公司信息
-      this.$http.post("/drug", this.cpyForm).then((res) => {
-        console.log("新增药品信息返回的数据");
-        console.log(res);
+    doSave() {// 新增药品信息
+      console.log("新增药品信息的表单addForm", this.addForm);
+      this.$http.post("/drug", this.addForm).then((res) => {
+        console.log("新增药品信息res", res);
         if (res.data.code == 200) {
           this.$message({
             message: "新增成功",
@@ -235,8 +275,9 @@ export default {
       });
     },
     doModify() {
-      this.$http.post(`/company/${this.modifyForm.id}`, this.modifyForm).then((res) => {
-        console.log(res);
+      console.log("doModify modifyForm", this.modifyForm);
+      this.$http.put(`/drug/${this.modifyForm.drugId}`, this.modifyForm).then((res) => {
+        console.log("修改药品信息res", res);
         if (res.data.code == 200) {
           this.$message({
             message: "修改成功",
@@ -250,15 +291,24 @@ export default {
   
     modifyBtn(row) {
       this.centerDialogVisible1 = true;
+      this.$http.get(`/sale/all`).then((res) => {
+        console.log("下拉选择的药店列表res", res);
+        if (res.data.code == 200) {
+          console.log("下拉选择的药店列表加载成功");
+          this.options = res.data.data;
+        } else this.$message.error(res.data.message);
+      });
       this.$nextTick(() => {
         this.modifyForm = row;
+        
+
+        console.log("modifyBtn modifyForm", this.modifyForm);
       });
     },
-    deleteReco(id) {
-      console.log("delete");
-      console.log(id);
-      this.$http.delete(`/company/${id}`).then((res) => {
-        console.log(res);
+    deleteReco(row) {
+      console.log("delete row", row);
+      this.$http.delete(`/drug/${row.drugId}`).then((res) => {
+        console.log("删除药品res", res);
         if (res.data.code == 200) {
           this.$message({
             message: "删除成功",
@@ -277,14 +327,16 @@ export default {
         this.$http.post("/image", formData ).then(res => {
           console.log("uploadFile图片上传返回数据");
           console.log(res);
-          if(res.data.code == 1){
-            this.form.gpicture = res.data.data;
-          }
-
         })
         this.imageUrl = URL.createObjectURL(item.raw); // 图片上传浏览器回显地址
+        console.log("uploadFile imageUrl", this.imageUrl);
         console.log("imageUrl", this.imageUrl)
         console.log("formData", this.formData)
+        if(this.centerDialogVisible1 == true)
+          this.modifyForm.drugImg = this.imageUrl
+        if(this.centerDialogVisible == true)
+          this.addForm.drugImg = this.imageUrl
+        
       },
     
     save() {
@@ -304,13 +356,16 @@ export default {
     handleChange(val){
 			let nodesInfo = this.$refs['cascader'].getCheckedNodes()
 			// 清空 addForm.store
-      this.addForm.store = [];
+      this.addForm.saleId = [];
+      this.modifyForm.saleId = [];
       // 遍历 nodesInfo 数组
       nodesInfo.forEach(node => {
         // 将 data 对象追加到 addForm.store 中
-        this.addForm.store.push(node.data);
+        this.addForm.saleId.push(parseInt(node.data.saleId, 10));
+        this.modifyForm.saleId.push(parseInt(node.data.saleId, 10));
       });
-      console.log("handleChange-addForm.store", this.addForm.store);
+      // 更新modifyForm.saleLocations
+      // this.modifyForm.saleLocations = val.map(id => this.options.find(option => option.value === id));
 		},
     resetForm() {
       this.$refs.form.resetFields();
