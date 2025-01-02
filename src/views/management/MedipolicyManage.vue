@@ -18,12 +18,15 @@
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
         >
-            <el-table-column prop="" label="公司名称"/>
-            <el-table-column prop="title" label="政策编号"/>
-            <el-table-column prop="city.cityName" label="政策名称"> 
-                <template #default="scope">
-                    {{ scope.row.city ? scope.row.city.cityName : '暂无数据' }}
-                </template>    
+            <el-table-column prop="companyName" label="公司名称"/>
+            <el-table-column prop="id" label="政策编号"/>
+            <el-table-column prop="title" label="政策标题"/>
+            <el-table-column prop="message" label="政策详情">
+              <template #default="scope">
+                <el-tooltip class="item" effect="dark" :content="scope.row.message" placement="top-start">
+                  <span>{{ scope.row.message ? '点击查看详细' : '无详情信息' }}</span>
+                </el-tooltip>
+              </template>
             </el-table-column>
             <el-table-column prop="updateTime" label="发布时间"> 
                 <template #default="scope">
@@ -78,12 +81,14 @@
                     v-model="cpyForm.message">
               </el-input>
             </el-form-item>
-            <el-form-item label="生效城市" prop="cityName">
+            <el-form-item label="生效公司" prop="company">
               <el-cascader
-                  placeholder="请选择要新增的城市"
-                  size="large"
-                  :options="pcTextArr"
-                  v-model="cpyForm.cityName">
+                ref="cascader"
+                placeholder="请选择生效公司"
+                :options="options"
+                :props="props"
+                @change="handleChange"
+                clearable>
               </el-cascader>
             </el-form-item>
         </el-form>
@@ -112,12 +117,15 @@
                     type="textarea"
                     v-model="modifyForm.message"></el-input>
                 </el-form-item>
-                <el-form-item label="生效城市" prop="city.cityName">
+                <el-form-item label="生效公司" prop="companyName">
                     <el-cascader
-                        placeholder="请选择要新增的城市"
-                        size="large"
-                        :options="pcTextArr"
-                        v-model="modifyForm.city.cityName">
+                      ref="cascader"
+                      placeholder="请选择生效公司"
+                      :options="options"
+                      :props="props"
+                      v-model="modifyForm.companyName"
+                      @change="handleChange"
+                      clearable>
                     </el-cascader>
                 </el-form-item>
             </el-form>
@@ -133,8 +141,6 @@
 </template>
 <script>
 import Breadcrumb from '@/components/Breadcrumb.vue';
-import { pcTextArr } from 'element-china-area-data'
-
 export default {
   data() {
     return {
@@ -147,19 +153,14 @@ export default {
       rules: {
         title: [{ required: true,  message: "请输入政策标题", trigger: "blur" }],
         message: [{ required: true, message: "请输入政策内容",  trigger: "blur" }],
-        cityName: [{ required: true,  message: "请输入选择对应城市", trigger: "blur" }],
+        company: [{ required: true,  message: "请输入选择对应城市", trigger: "blur" }],
       },
       cpyForm: {//新增弹出框
-        title: '',
-        message: '',
-        cityName: '',
+        title: "",
+        message: "",
+        companyId: "",
       },
       modifyForm: {
-        title:'',
-        message:'',
-        city: {
-            cityName:''
-        }
       },
       mform: {
         id:'',
@@ -168,32 +169,36 @@ export default {
         cityId:'',
       },
       centerDialogVisible1: false, // 修改触发的dialog窗口
-      pcTextArr,
-      selectedOptions: []// 城市二级选择
+      props: { 
+        multiple: false ,
+        emitPath: false,
+        value: 'id',
+        label: 'name'
+      },//新增dialog中的级联组件要用
+      options: []
     };
   },
   created() {
     this.loadInfo();
   },
   methods: {
-    search() {//todo
+    search() {
         this.loadInfo();
     },
     loadInfo() {
       this.$http
-        .get(`/medical_policy?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
+        .get(`/company_policy?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
         .then((res) => {
-          console.log("初始页面(搜索)，加载医保政策信息", res);
-        //   if (res.data.code == 200 && res.data.data != null) {
-        //     this.tableData = res.data.data.list;
-        //     this.total = res.data.data.list.length;
-        //   } else alert("获取数据失败");
+          console.log("初始页面(搜索)，加载医药公司政策信息", res);
+          if (res.data.code == 200 && res.data.data != null) {
+            this.tableData = res.data.data.list;
+            this.total = res.data.data.list.length;
+          } else alert("获取数据失败");
         });
     },
     doSave() {// 新增公司信息
-      this.$http.post("/company", this.cpyForm).then((res) => {
-        console.log("新增公司信息");
-        console.log(res);
+      this.$http.post("/company_policy", this.cpyForm).then((res) => {
+        console.log("新增医药公司政策信息", res);
         if (res.data.code == 200) {
           this.$message({
             message: "新增成功",
@@ -205,12 +210,12 @@ export default {
       });
     },
     doModify() {
-      this.mform.id = this.modifyForm.id;
-      this.mform.title = this.modifyForm.title;
-      this.mform.message = this.modifyForm.message;
-      this.mform.cityId = this.modifyForm.city.id;
-      console.log("提交的mform", this.mform);
-      this.$http.put(`/medical_policy/${this.mform.id}`, this.mform).then((res) => {
+      // this.mform.id = this.modifyForm.id;
+      // this.mform.title = this.modifyForm.title;
+      // this.mform.message = this.modifyForm.message;
+      // this.mform.cityId = this.modifyForm.city.id;
+      console.log("提交的modifyForm", this.modifyForm);
+      this.$http.put(`/company_policy/${this.modifyForm.id}`, this.modifyForm).then((res) => {
         console.log("doModify修改返回数据", res);
         if (res.data.code == 200) {
           this.$message({
@@ -224,19 +229,23 @@ export default {
     },
   
     modifyBtn(row) {
+      this.$http.get(`/company/all`).then((res) => {
+        console.log("供选择的公司列表数据", res);
+        if (res.data.code == 200) {
+          console.log("公司列表数据加载成功");
+          this.options = res.data.data;
+        } else this.$message.error(res.data.message);
+      });
       this.centerDialogVisible1 = true;
       this.$nextTick(() => {
         this.modifyForm = row;
-        console.log("modifyFormthis",this.modifyForm);
-        // console.log("mform",this.mform);
+        console.log("点击修改按钮后的modifyForm",this.modifyForm);
 
       });
     },
     deleteReco(row) {
-      console.log("delete");
-      console.log(row);
-      this.$http.delete(`/medical_policy/${row.id}`).then((res) => {
-        console.log(res);
+      this.$http.delete(`/company_policy/${row.id}`).then((res) => {
+        console.log("删除返回信息", res);
         if (res.data.code == 200) {
           this.$message({
             message: "删除成功",
@@ -246,6 +255,13 @@ export default {
         } else this.$message.error(res.data.message);
       });
     },
+    handleChange(val){
+			let nodesInfo = this.$refs['cascader'].getCheckedNodes()
+      console.log("handleChange选择的城市", nodesInfo);
+			// 清空 addForm.store
+      this.cpyForm.companyId = nodesInfo[0].data.id;
+      console.log("handleChange之后的cpyForm", this.cpyForm);
+		},
     
     
     save() {
@@ -267,6 +283,14 @@ export default {
     },
     addBtn() {
       this.centerDialogVisible = true;
+      this.$http
+        .get(`/company/all`)
+        .then((res) => {
+          console.log("获取公司列表，用于新增表单的选择", res);
+          if (res.data.code == 200 && res.data.data != null) {
+            this.options = res.data.data
+          } else alert("获取数据失败");
+        });
       this.$nextTick(() => {
         this.resetForm();
       });

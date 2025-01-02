@@ -14,6 +14,7 @@
             <el-button type="success" @click="addBtn">新增</el-button>
         </div>
         <el-scrollbar>
+        <!-- 数据表 -->
         <el-table :data="tableData" :row-style="{height: '160px'}" 
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
@@ -97,7 +98,7 @@
                           <div>上传图片</div>
                           <div>格式为png、jpeg或jpg</div>
                       </div>
-                  </el-upload>
+              </el-upload>
             </el-form-item>
             <el-form-item label="销售药店" prop="store">
               <el-cascader
@@ -106,7 +107,8 @@
                 :options="options"
                 :props="props"
                 @change="handleChange"
-                clearable></el-cascader>
+                clearable>
+              </el-cascader>
             </el-form-item>
         </el-form>
         <template #footer>

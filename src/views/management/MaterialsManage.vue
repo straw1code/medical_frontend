@@ -20,14 +20,10 @@
         >
             <el-table-column prop="name" label="医生姓名"/>
             <el-table-column prop="age" label="年龄"/>
-            <el-table-column prop="sex" label="性别">
-              <template #default="scope">
-                {{ scope.row.sex == 1 ? "男" : "女"  }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="level" label="级别"/>
+            <el-table-column prop="levelId" label="性别"/>
+            <el-table-column prop="id" label="级别"/>
             <el-table-column prop="phone" label="手机号"/>
-            <el-table-column prop="type" label="诊治类别"/>           
+            <el-table-column prop="cityName" label="诊治类别"/>           
             <el-table-column prop="operare" label="操作" width="260px">
               <template v-slot="scope">
                 <el-button type="success" @click="modifyBtn(scope.row)"

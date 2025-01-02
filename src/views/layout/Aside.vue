@@ -12,24 +12,24 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/company_manage">医药公司管理</router-link>
+      <router-link tag="span" to="/main/company_manage">医药公司管理DONE</router-link>
       <!-- <span slot="title">寻宠启示</span> -->
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/salepos_manage">销售地点管理</router-link>
+      <router-link tag="span" to="/main/salepos_manage">销售地点管理WAIT</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/cityinfo_manage">城市信息管理</router-link>
+      <router-link tag="span" to="/main/cityinfo_manage">城市信息管理DONE</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/medinfo_manage">药品信息管理</router-link>
+      <router-link tag="span" to="/main/medinfo_manage">药品信息管理WAIT</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/hcpolicy_manage">医保政策管理</router-link>
+      <router-link tag="span" to="/main/hcpolicy_manage">医保政策管理DONE</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>

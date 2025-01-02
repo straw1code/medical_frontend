@@ -10,6 +10,7 @@ import MedinfoManage from '@/views/management/MedinfoManage.vue'
 import HcpolicyManage from '@/views/management/HcpolicyManage.vue'
 import MedipolicyManage from '@/views/management/MedipolicyManage.vue'
 import DoctorManage from '@/views/management/DoctorManage.vue'
+import MaterialsManage from '@/views/management/MaterialsManage.vue'
 
 const routes = [
     { path: "/", redirect: "/login" },
@@ -58,6 +59,11 @@ const routes = [
                 path: "docinfo_manage",
                 component: DoctorManage,
                 meta: { title: "医生信息管理"},
+            },
+            {
+                path: "materials_manage",
+                component: MaterialsManage,
+                meta: { title: "必备材料管理"},
             },
         ]
     }
