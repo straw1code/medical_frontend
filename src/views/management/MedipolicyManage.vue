@@ -1,3 +1,4 @@
+<!-- 医药公司政策管理界面 -->
 <template>
     <Breadcrumb/>
     <div class="outbox">
@@ -21,13 +22,7 @@
             <el-table-column prop="companyName" label="公司名称"/>
             <el-table-column prop="id" label="政策编号"/>
             <el-table-column prop="title" label="政策标题"/>
-            <el-table-column prop="message" label="政策详情">
-              <template #default="scope">
-                <el-tooltip class="item" effect="dark" :content="scope.row.message" placement="top-start">
-                  <span>{{ scope.row.message ? '点击查看详细' : '无详情信息' }}</span>
-                </el-tooltip>
-              </template>
-            </el-table-column>
+            <el-table-column prop="message" label="政策内容"/>
             <el-table-column prop="updateTime" label="发布时间"> 
                 <template #default="scope">
                     {{ formatDateTime(scope.row.updateTime) }}

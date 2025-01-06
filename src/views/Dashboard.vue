@@ -4,7 +4,7 @@
         <img :src=img style="height: 100%; width: 100%;margin-left: -0px;">
       </el-carousel-item>
     </el-carousel>
-    <el-card shadow="hover" v-for="card in cardinfo" class="box-card" :body-style="{ padding: '0px' }" >
+    <el-card shadow="hover" @click="goTo(card.rou)" v-for="card in cardinfo" class="box-card" :body-style="{ padding: '0px' }" >
     <img :src="card.img" class="image">
         <div style="padding: 14px;">
             <div class="bottom clearfix">
@@ -25,99 +25,54 @@
             ],
         cardinfo:[
             {
-                desc: '基础信息管理',
+                desc: '医药公司信息管理',
                 img: '../../public/static/img/loginbg.jpg',
+                rou: '/main/company_manage'
             },
             {
                 desc: '药品信息管理',
                 img: '../../public/static/img/loginbg.jpg',
+                rou: '/main/medinfo_manage'
+
             },
             {
                 desc: '医保政策管理',
                 img: '../../public/static/img/loginbg.jpg',
+                rou: '/main/hcpolicy_manage'
+                
             },
             {
                 desc: '医药公司政策管理',
                 img: '../../public/static/img/loginbg.jpg',
+                rou: '/main/medipolicy_manage'
+
             },
             {
                 desc: '医生信息管理',
                 img: '../../public/static/img/loginbg.jpg',
+                rou: '/main/docinfo_manage'
+
             },
             {
                 desc: '必备材料管理',
                 img: '../../public/static/img/loginbg.jpg',
+                rou: '/main/material_manage'
+
             },
         ],
         
         user: JSON.parse(sessionStorage.getItem("CurUser")),
       };
     },
-    // 获取宠物对象，给uid赋值为当前用户的uid，再提交给后端数据库修改uid的值
-    created() {
-      this.listPet();
-    },
     methods: {
-      
-      preAdopt(pet) { // 预约领养按钮
-        pet.btnIsDisabled = 1; // 禁用按钮
-        pet.uid = this.user.uid;
-        console.log("预约领养");
-        console.log(pet);
-        this.$http.post("/pet/preAdopt", pet).then((res) => {
-          console.log(res);
-          if (res.status == 200) {
-            this.$message({
-              message: "操作成功",
-              type: "success",
-            });
-            this.centerDialogVisible = false;
-            this.listPet();
-          } else this.$message.error("数据提交失败");
-        });
-      },
-      listPet() { // 初始化加载
-        this.$http
-          .post("/pet/getPetAndSta", {
-            pageSize: this.pageSize,
-            pageNum: this.currentPage,
-          })
-          .then((res) => {
-            console.log(res.data);
-            if (res.status == 200) {
-              this.petInfo = res.data.list;
-              this.total = res.data.total;
-            } else alert("获取数据失败");
-          });
-        // this.$http
-        //   .get("/pet/getPetAndSta")
-        //   .then((res) => {
-        //     console.log(res.data);
-        //     if (res.status == 200) {
-        //       this.petInfo = res.data;
-        //     } else alert("获取数据失败");
-        //   });
-      },
-      handleSizeChange(val) { // 以下这俩是分页组件的
-        console.log(`每页 ${val} 条`);
-        this.pageSize = val;
-        this.listPet();
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-        this.currentPage = val;
-        this.listPet();
-      },
+      goTo(rou) {
+        console.log("goTo(rou)", rou);
+        this.$router.push(rou);
+      }
     },
   };
   </script>
   <style scoped>
-  /* img {
-    height: 200px;
-    width: 200px;
-    margin-left: 30px;
-    margin-top: 37px;
-  } */
   .box-card {
     float: left;
     width: 200px;

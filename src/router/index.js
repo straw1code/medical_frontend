@@ -11,6 +11,7 @@ import HcpolicyManage from '@/views/management/HcpolicyManage.vue'
 import MedipolicyManage from '@/views/management/MedipolicyManage.vue'
 import DoctorManage from '@/views/management/DoctorManage.vue'
 import MaterialsManage from '@/views/management/MaterialsManage.vue'
+import DataDashboard from '@/views/DataDashboard.vue'
 
 const routes = [
     { path: "/", redirect: "/main" },
@@ -61,9 +62,14 @@ const routes = [
                 meta: { title: "医生信息管理"},
             },
             {
-                path: "materials_manage",
+                path: "material_manage",
                 component: MaterialsManage,
                 meta: { title: "必备材料管理"},
+            },
+            {
+                path: "data_dashboard",
+                component: DataDashboard,
+                meta: { title: "数据面板"},
             },
         ]
     }

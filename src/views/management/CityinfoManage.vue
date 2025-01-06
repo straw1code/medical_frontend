@@ -1,3 +1,4 @@
+<!-- 城市信息管理界面 -->
 <template>
   <Breadcrumb/>
   <div class="outbox">
@@ -14,6 +15,7 @@
           <el-button type="success" @click="addBtn">新增</el-button>
       </div>
       <el-scrollbar>
+        <!-- 数据表 -->
       <el-table :data="tableData" :row-style="{height: '160px'}" 
       :header-cell-style="{'text-align':'center'}"
       :cell-style="{'text-align':'center'}"
@@ -21,6 +23,7 @@
           <el-table-column prop="id" label="城市编号"/>
           <el-table-column prop="provinceName" label="所属省"/>
           <el-table-column prop="cityName" label="城市名称"/>           
+          <el-table-column prop="number" label="邮政编码"/>           
           <el-table-column prop="operare" label="操作">
             <template v-slot="scope">
                 <el-popconfirm

@@ -1,3 +1,4 @@
+<!-- 医药公司管理页面 -->
 <template>
     <Breadcrumb/>
     <div class="outbox">
@@ -142,7 +143,7 @@ export default {
       this.$http
         .get(`/company?pn=${this.currentPage}&size=${this.pageSize}&keyword=${this.searchEtd}`)
         .then((res) => {
-          console.log(res);
+          console.log("医药公司列表res", res);
           if (res.data.code == 200 && res.data.data != null) {
             this.tableData = res.data.data.list;
             this.total = res.data.data.list.length;

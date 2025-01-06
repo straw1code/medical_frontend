@@ -10,6 +10,7 @@ import '../public/static/css/global.css'
 
 import axios from "axios";
 // axios.defaults.baseURL = "http://localhost:8080";
+// 不能写死
 axios.defaults.baseURL = "/api";
 
 const app = createApp(App)

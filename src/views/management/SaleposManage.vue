@@ -1,3 +1,4 @@
+<!-- 销售地点管理界面 -->
 <template>
   <Breadcrumb/>
   <div class="outbox">

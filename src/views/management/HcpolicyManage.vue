@@ -1,3 +1,4 @@
+<!-- 医保政策管理界面 -->
 <template>
     <Breadcrumb/>
     <div class="outbox">
@@ -48,6 +49,7 @@
         >
             <el-table-column prop="id" label="医保编号"/>
             <el-table-column prop="title" label="政策标题"/>
+            <el-table-column prop="message" label="政策标题"/>
             <el-table-column prop="city.cityName" label="城市"> 
                 <template #default="scope">
                     {{ scope.row.city ? scope.row.city.cityName : '暂无数据' }}

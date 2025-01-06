@@ -41,7 +41,11 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/materials_manage">必备材料管理DONE</router-link>
+      <router-link tag="span" to="/main/material_manage">必备材料管理DONE</router-link>
+    </el-menu-item>
+    <el-menu-item>
+      <el-icon><Promotion /></el-icon>
+      <router-link tag="span" to="/main/data_dashboard">数据面板TBD</router-link>
     </el-menu-item>
   </el-menu>
 </template>
