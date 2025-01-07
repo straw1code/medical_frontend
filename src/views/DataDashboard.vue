@@ -1,5 +1,7 @@
 <template>
-   <div id="main" style="width: 600px;height:400px;"></div>
+    <div id="container">
+      <div id="main" style="width: 600px;height:400px;"></div>
+    </div>
 </template>
 
 <script>
@@ -11,7 +13,7 @@ export default {
     }
   },
   mounted() {
-    this.initBar();;
+    this.initBar();
   },
   methods: {
     showBar() {
@@ -70,11 +72,16 @@ export default {
         }
       }).catch(err => console.log(err))
       this.showBar()
-    }
+    },
   }
 }
 </script>
 
-<style>
-
+<style scoped>
+#container {
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    height: 100vh; /* 占满整个视口高度 */
+  }
 </style>

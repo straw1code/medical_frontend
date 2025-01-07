@@ -12,6 +12,7 @@ import MedipolicyManage from '@/views/management/MedipolicyManage.vue'
 import DoctorManage from '@/views/management/DoctorManage.vue'
 import MaterialsManage from '@/views/management/MaterialsManage.vue'
 import DataDashboard from '@/views/DataDashboard.vue'
+import Pie from '@/views/Pie.vue'
 
 const routes = [
     { path: "/", redirect: "/main" },
@@ -70,6 +71,11 @@ const routes = [
                 path: "data_dashboard",
                 component: DataDashboard,
                 meta: { title: "数据面板"},
+            },
+            {
+                path: "pie",
+                component: Pie,
+                meta: { title: "饼状图统计"},
             },
         ]
     }

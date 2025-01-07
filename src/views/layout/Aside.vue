@@ -44,7 +44,11 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/data_dashboard">数据面板</router-link>
+      <router-link tag="span" to="/main/data_dashboard">柱状图统计</router-link>
+    </el-menu-item>
+    <el-menu-item>
+      <el-icon><Promotion /></el-icon>
+      <router-link tag="span" to="/main/pie">饼状图统计</router-link>
     </el-menu-item>
   </el-menu>
 </template>
