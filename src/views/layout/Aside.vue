@@ -12,40 +12,39 @@
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/company_manage">医药公司管理DONE</router-link>
-      <!-- <span slot="title">寻宠启示</span> -->
+      <router-link tag="span" to="/main/company_manage">医药公司管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/salepos_manage">销售地点管理DONE</router-link>
+      <router-link tag="span" to="/main/salepos_manage">销售地点管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/cityinfo_manage">城市信息管理DONE</router-link>
+      <router-link tag="span" to="/main/cityinfo_manage">城市信息管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/medinfo_manage">药品信息管理DONE</router-link>
+      <router-link tag="span" to="/main/medinfo_manage">药品信息管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/hcpolicy_manage">医保政策管理DONE</router-link>
+      <router-link tag="span" to="/main/hcpolicy_manage">医保政策管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/medipolicy_manage">医药公司政策管理DONE</router-link>
+      <router-link tag="span" to="/main/medipolicy_manage">医药公司政策管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/docinfo_manage">医生信息管理(剩下新增</router-link>
+      <router-link tag="span" to="/main/docinfo_manage">医生信息管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/material_manage">必备材料管理DONE</router-link>
+      <router-link tag="span" to="/main/material_manage">必备材料管理</router-link>
     </el-menu-item>
     <el-menu-item>
       <el-icon><Promotion /></el-icon>
-      <router-link tag="span" to="/main/data_dashboard">数据面板TBD</router-link>
+      <router-link tag="span" to="/main/data_dashboard">数据面板</router-link>
     </el-menu-item>
   </el-menu>
 </template>

@@ -13,12 +13,16 @@ import axios from "axios";
 // 不能写死
 axios.defaults.baseURL = "/api";
 
+import * as echarts from 'echarts'
+
 const app = createApp(App)
 
 app.config.globalProperties.$http = axios;
 
 app.config.globalProperties.$confirm = ElMessageBox.confirm
 app.config.globalProperties.$message = ElMessage
+
+app.config.globalProperties.$echarts = echarts
 
 //路由挂载
 app.use(router)
