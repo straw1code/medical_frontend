@@ -76,8 +76,11 @@
               <el-form-item label="用户名" prop="username">
                   <el-input v-model="cpyForm.username"></el-input>
               </el-form-item>
-              <el-form-item label="登录密码" prop="psw">
-                  <el-input v-model="cpyForm.psw"></el-input>
+              <el-form-item label="登录密码" prop="password">
+                  <el-input v-model="cpyForm.password"></el-input>
+              </el-form-item>
+              <el-form-item label="确认密码" prop="confirmPassword">
+                  <el-input v-model="cpyForm.confirmPassword"></el-input>
               </el-form-item>
               <el-form-item label="年龄" prop="age">
                 <el-input v-model="cpyForm.age"></el-input>
@@ -209,7 +212,12 @@
                }],
         typeId: [{ required: true,  message: "请选择医生的诊治类别", trigger: "blur" }],
         hospital: [{ required: true,  message: "请输入医生所属的医院", trigger: "blur" }],
-        
+        password: [{ required: true,  message: "请输入登录密码", trigger: "blur" }],
+        confirmPassword: [
+          { required: true, message: "请确认密码", trigger: 'blur' },
+          { validator: this.validatePassword, trigger: 'blur' }
+        ],
+        username: [{ required: true,  message: "请输入用户名", trigger: "blur" }],
       },
       cpyForm: {//新增弹出框
       },
@@ -236,6 +244,15 @@
     }
   },
   methods: {
+    validatePassword(rule, confirmPassword, callback) {
+      if (confirmPassword === '') {
+        callback(new Error('请确认密码'));
+      } else if (confirmPassword !== this.cpyForm.password) {
+        callback(new Error('两次输入的密码不一致'));
+      } else {
+        callback();
+      }
+    },
     search() {
       this.loadInfo()
     },
@@ -278,18 +295,23 @@
         console.log(this.modifyForm);
       });
   },
-    doSave() {// 新增城市信息
-      this.$http.post(`/doctor`, this.cpyForm).then((res) => {
-        console.log("新增医生信息res", res);
-        if (res.data.code == 200) {
-          this.$message({
-            message: "新增成功",
-            type: "success",
+    doSave() {// 新增医生信息
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          // 验证通过
+          this.$http.post(`/doctor`, this.cpyForm).then((res) => {
+            console.log("新增医生信息res", res);
+            if (res.data.code == 200) {
+              this.$message({
+                message: "新增成功",
+                type: "success",
+              });
+              this.centerDialogVisible = false;
+              this.loadInfo();
+            } else this.$message.error(res.data.message);
           });
-          this.centerDialogVisible = false;
-          this.loadInfo();
-        } else this.$message.error(res.data.message);
-      });
+        }
+      })
     },
     doModify() {
       console.log("doModify modifyForm", this.modifyForm);
